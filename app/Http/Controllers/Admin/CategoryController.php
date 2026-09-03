@@ -33,6 +33,7 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:categories,slug',
             'parent_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
             'order' => 'nullable|integer',
@@ -41,7 +42,7 @@ class CategoryController extends Controller
             'category_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:5120',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = !empty($request->input('slug')) ? Str::slug($request->input('slug')) : Str::slug($validated['name']);
         $validated['order'] = $validated['order'] ?? 0;
 
         if ($request->hasFile('category_image')) {
@@ -55,7 +56,7 @@ class CategoryController extends Controller
 
         CatalogController::clearFileCache();
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully with image.');
+        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully with custom slug and CKEditor description.');
     }
 
     public function edit(Category $category)
@@ -68,6 +69,7 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:categories,slug,' . $category->id,
             'parent_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
             'order' => 'nullable|integer',
@@ -76,7 +78,7 @@ class CategoryController extends Controller
             'category_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:5120',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = !empty($request->input('slug')) ? Str::slug($request->input('slug')) : Str::slug($validated['name']);
         $validated['order'] = $validated['order'] ?? 0;
 
         if ($request->hasFile('category_image')) {

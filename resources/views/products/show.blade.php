@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $product->name . ' | Zerox – Pharmaceuticals')
-@section('meta_description', Str::limit($product->description, 160))
+@section('meta_description', Str::limit(strip_tags($product->description), 160))
 
 @section('content')
 <section class="banner" style="min-height: 120px; background: #0f172a; color: #fff; padding: 40px 0;">
@@ -48,7 +48,9 @@
                 <span style="background: #f0f4f8; color: #333; padding: 5px 12px; border-radius: 4px; font-size: 14px; font-weight: 600;">Pack Size: {{ $product->pack_size ?? 'N/A' }}</span>
             </div>
 
-            <p style="font-size: 15px; line-height: 1.6; color: #555; margin-bottom: 25px;">{{ $product->description }}</p>
+            <div style="font-size: 15px; line-height: 1.6; color: #555; margin-bottom: 25px;">
+                {!! $product->description !!}
+            </div>
 
             <div style="background: #fff8e6; border: 1px solid #ffeeba; border-radius: 6px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
@@ -69,15 +71,15 @@
         </div>
 
         <div id="tab-chemical" class="tab-content-item animated-fade-in" style="display: block;">
-            <pre style="background: #f8f9fa; padding: 20px; border-radius: 6px; font-family: monospace; white-space: pre-wrap; color: #333;">{{ $product->chemical_characteristics }}</pre>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; font-family: monospace; white-space: pre-wrap; color: #333;">{!! $product->chemical_characteristics !!}</div>
         </div>
 
         <div id="tab-side-effects" class="tab-content-item animated-fade-in" style="display: none;">
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; color: #444; white-space: pre-wrap;">{{ $product->side_effects }}</div>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; color: #444;">{!! $product->side_effects !!}</div>
         </div>
 
         <div id="tab-administration" class="tab-content-item animated-fade-in" style="display: none;">
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; color: #444; white-space: pre-wrap;">{{ $product->administration_uses }}</div>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; color: #444;">{!! $product->administration_uses !!}</div>
         </div>
     </div>
 </div>

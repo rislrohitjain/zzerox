@@ -30,6 +30,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:products,slug',
             'sku' => 'required|string|max:100|unique:products,sku',
             'dosage_form' => 'nullable|string|max:100',
             'pack_size' => 'nullable|string|max:100',
@@ -41,7 +42,7 @@ class ProductController extends Controller
             'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:5120',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = !empty($request->input('slug')) ? Str::slug($request->input('slug')) : Str::slug($validated['name']);
         $validated['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('main_image')) {
@@ -67,7 +68,7 @@ class ProductController extends Controller
 
         CatalogController::clearFileCache();
 
-        return redirect()->route('admin.products.index')->with('success', 'Product created successfully with image and gallery.');
+        return redirect()->route('admin.products.index')->with('success', 'Product created successfully with custom slug and CKEditor descriptions.');
     }
 
     public function edit(Product $product)
@@ -82,6 +83,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:products,slug,' . $product->id,
             'sku' => 'required|string|max:100|unique:products,sku,' . $product->id,
             'dosage_form' => 'nullable|string|max:100',
             'pack_size' => 'nullable|string|max:100',
@@ -93,7 +95,7 @@ class ProductController extends Controller
             'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:5120',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $validated['slug'] = !empty($request->input('slug')) ? Str::slug($request->input('slug')) : Str::slug($validated['name']);
         $validated['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('main_image')) {
