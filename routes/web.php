@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\RoleUserController as AdminRoleUserController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\SubscriberController as AdminSubscriberController;
+use App\Http\Controllers\Admin\PerformanceController as AdminPerformanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,10 +80,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,operator
     Route::post('verifications', [AdminVerificationController::class, 'store'])->name('verifications.store');
     Route::delete('verifications/{verification}', [AdminVerificationController::class, 'destroy'])->name('verifications.destroy');
 
-    // Settings & User Management (Admin role only)
+    // Settings, User & Performance Management (Admin role only)
     Route::middleware('role:admin')->group(function () {
         Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [AdminSettingController::class, 'update'])->name('settings.update');
+
+        // Site Performance & Speed Optimization Routes
+        Route::get('performance', [AdminPerformanceController::class, 'index'])->name('performance.index');
+        Route::post('performance/optimize', [AdminPerformanceController::class, 'optimize'])->name('performance.optimize');
 
         // Users & Roles Management
         Route::get('users', [AdminRoleUserController::class, 'index'])->name('users.index');
