@@ -16,17 +16,26 @@ class SettingController extends Controller
 
     public function update(Request $request)
     {
-        $inputs = $request->except(['_token', 'site_logo', 'site_favicon']);
+        $inputs = $request->except(['_token', 'site_logo_header', 'site_logo_footer', 'site_favicon']);
 
         // Handle Site Maintenance Toggle (checkbox)
         $inputs['site_under_maintenance'] = $request->has('site_under_maintenance') ? '1' : '0';
 
-        // Handle Site Logo Upload
-        if ($request->hasFile('site_logo')) {
-            $file = $request->file('site_logo');
-            $fileName = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
+        // Handle Header Logo Upload
+        if ($request->hasFile('site_logo_header')) {
+            $file = $request->file('site_logo_header');
+            $fileName = 'logo_header_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('img'), $fileName);
+            SiteSetting::set('site_logo_header', 'img/' . $fileName);
             SiteSetting::set('site_logo', 'img/' . $fileName);
+        }
+
+        // Handle Footer Logo Upload
+        if ($request->hasFile('site_logo_footer')) {
+            $file = $request->file('site_logo_footer');
+            $fileName = 'logo_footer_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('img'), $fileName);
+            SiteSetting::set('site_logo_footer', 'img/' . $fileName);
         }
 
         // Handle Site Favicon Upload
@@ -43,6 +52,6 @@ class SettingController extends Controller
 
         SiteSetting::clearCache();
 
-        return redirect()->back()->with('success', 'Site settings, logos, map location, and maintenance status updated successfully.');
+        return redirect()->back()->with('success', 'Header logo, footer logo, favicon icon, map coordinates, and settings updated successfully.');
     }
 }

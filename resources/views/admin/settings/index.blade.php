@@ -52,32 +52,45 @@
                 </div>
             </div>
 
-            <!-- Media: Logo & Favicon -->
+            <!-- Media: Header Logo, Footer Logo & Favicon Icon -->
             <div class="tab-pane fade" id="mediaTab">
                 <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="p-3 border rounded bg-light">
-                            <label class="form-label fw-bold">Upload Header & Footer Logo</label>
-                            <input type="file" name="site_logo" class="form-control" accept="image/*">
-                            @if(isset($settings['site_logo']))
-                                <div class="mt-2">
-                                    <small class="text-muted d-block mb-1">Current Logo:</small>
-                                    <img src="{{ asset($settings['site_logo']) }}" style="height: 45px; background: #000; padding: 5px;" class="rounded border">
-                                </div>
-                            @endif
+                    <!-- Header Logo Upload -->
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-light h-100">
+                            <label class="form-label fw-bold"><i class="bi bi-layout-header text-primary me-1"></i> Upload Header Logo Real Image</label>
+                            <input type="file" name="site_logo_header" class="form-control" accept="image/*">
+                            <div class="form-text">Main top header brand logo.</div>
+                            <div class="mt-3">
+                                <small class="text-muted d-block mb-1">Current Header Logo:</small>
+                                <img src="{{ asset($settings['site_logo_header'] ?? ($settings['site_logo'] ?? 'img/logo.png')) }}" style="max-height: 50px; max-width: 100%; background: #000; padding: 6px;" class="rounded border">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="p-3 border rounded bg-light">
-                            <label class="form-label fw-bold">Upload Favicon Icon (.png / .ico)</label>
+                    <!-- Footer Logo Upload -->
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-light h-100">
+                            <label class="form-label fw-bold"><i class="bi bi-layout-sidebar-reverse text-success me-1"></i> Upload Footer Logo Real Image</label>
+                            <input type="file" name="site_logo_footer" class="form-control" accept="image/*">
+                            <div class="form-text">Bottom footer brand logo.</div>
+                            <div class="mt-3">
+                                <small class="text-muted d-block mb-1">Current Footer Logo:</small>
+                                <img src="{{ asset($settings['site_logo_footer'] ?? ($settings['site_logo'] ?? 'img/logo.png')) }}" style="max-height: 50px; max-width: 100%; background: #000; padding: 6px;" class="rounded border">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Favicon Upload -->
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-light h-100">
+                            <label class="form-label fw-bold"><i class="bi bi-globe text-info me-1"></i> Upload Favicon Icon (.png / .ico)</label>
                             <input type="file" name="site_favicon" class="form-control" accept="image/*">
-                            @if(isset($settings['site_favicon']))
-                                <div class="mt-2">
-                                    <small class="text-muted d-block mb-1">Current Favicon:</small>
-                                    <img src="{{ asset($settings['site_favicon']) }}" style="height: 32px;" class="rounded border">
-                                </div>
-                            @endif
+                            <div class="form-text">Browser tab icon.</div>
+                            <div class="mt-3">
+                                <small class="text-muted d-block mb-1">Current Favicon:</small>
+                                <img src="{{ asset($settings['site_favicon'] ?? 'favicon.ico') }}" style="height: 36px; width: 36px; object-fit: contain;" class="rounded border p-1 bg-white">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -169,24 +182,20 @@
             lngInput.value = newLng.toFixed(6);
         }
 
-        // On marker drag end
         marker.on('dragend', function(e) {
             const position = marker.getLatLng();
             updateInputs(position.lat, position.lng);
         });
 
-        // On map click
         map.on('click', function(e) {
             marker.setLatLng(e.latlng);
             updateInputs(e.latlng.lat, e.latlng.lng);
         });
 
-        // On zoom end
         map.on('zoomend', function() {
             zoomInput.value = map.getZoom();
         });
 
-        // If manual text input changed
         function onManualInputChange() {
             let nLat = parseFloat(latInput.value);
             let nLng = parseFloat(lngInput.value);
@@ -198,7 +207,6 @@
         latInput.addEventListener('change', onManualInputChange);
         lngInput.addEventListener('change', onManualInputChange);
 
-        // Resize map when tab is shown
         const contactTabEl = document.getElementById('contactTabLink');
         if (contactTabEl) {
             contactTabEl.addEventListener('shown.bs.tab', function () {

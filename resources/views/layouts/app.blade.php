@@ -154,7 +154,7 @@
                 </ul>
             </nav>
             <a href="{{ route('home') }}" class="header__logo">
-                <img src="{{ asset(\App\Models\SiteSetting::get('site_logo', 'img/logo.png')) }}" alt="Zerox" style="max-height: 45px;">
+                <img src="{{ asset(\App\Models\SiteSetting::get('site_logo_header', \App\Models\SiteSetting::get('site_logo', 'img/logo.png'))) }}" alt="Zerox Header Logo" style="max-height: 45px;">
             </a>
             <nav class="header__nav header__nav_right">
                 <ul id="menu-top-right-menu">
@@ -208,7 +208,7 @@
             <div class="row">
                 <div class="col-md-3 col-xs-12">
                     <a href="{{ route('home') }}" class="footer__logo">
-                        <img src="{{ asset(\App\Models\SiteSetting::get('site_logo', 'img/logo.png')) }}" alt="Zerox" style="max-height: 40px;">
+                        <img src="{{ asset(\App\Models\SiteSetting::get('site_logo_footer', \App\Models\SiteSetting::get('site_logo', 'img/logo.png'))) }}" alt="Zerox Footer Logo" style="max-height: 40px;">
                     </a>
                 </div>
                 <div class="col-md-3 col-xs-12">
@@ -275,7 +275,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Lightbox default configurations for image zoom
         if (typeof lightbox !== 'undefined') {
             lightbox.option({
                 'resizeDuration': 200,
