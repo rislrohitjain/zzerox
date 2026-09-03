@@ -21,6 +21,18 @@ class CatalogController extends Controller
         });
     }
 
+    public function allCategories()
+    {
+        $categories = $this->getCachedCategories();
+
+        $allParents = Category::whereNull('parent_id')
+            ->with(['children.products', 'products'])
+            ->orderBy('order', 'asc')
+            ->get();
+
+        return view('products.index', compact('categories', 'allParents'));
+    }
+
     public function category(Request $request, $slug)
     {
         $categories = $this->getCachedCategories();
@@ -48,7 +60,7 @@ class CatalogController extends Controller
                 break;
         }
 
-        $products = $query->paginate(9)->withQueryString();
+        $products = $query->paginate(12)->withQueryString();
 
         return view('products.category', compact('categories', 'currentCategory', 'products', 'sort'));
     }

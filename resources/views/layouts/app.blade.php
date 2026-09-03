@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    <!-- Custom Photo Gallery Zoom Effects & Micro-Animations -->
+    <!-- Custom Photo Gallery Zoom Effects, Animations & Attractive Pagination -->
     <style>
         /* Smooth Fade In Animation */
         @keyframes fadeInUp {
@@ -99,6 +99,48 @@
             box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.4);
         }
 
+        /* Attractive Gold Accent Pagination Styling */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 30px;
+            padding-left: 0;
+            list-style: none;
+        }
+        .pagination .page-item .page-link {
+            color: #333;
+            background-color: #fff;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 6px !important;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .pagination .page-item:hover .page-link {
+            color: #000;
+            background-color: #fff8e6;
+            border-color: #c9a227;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(201, 162, 39, 0.2);
+        }
+        .pagination .page-item.active .page-link {
+            color: #000;
+            background-color: #c9a227;
+            border-color: #c9a227;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(201, 162, 39, 0.35);
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #aaa;
+            background-color: #f8f9fa;
+            border-color: #eee;
+            pointer-events: none;
+        }
+
         /* Modal styling */
         .modal-custom {
             display: none;
@@ -148,8 +190,8 @@
                     <li class="{{ request()->routeIs('about') ? 'current-menu-item' : '' }}">
                         <a href="{{ route('about') }}">About Us</a>
                     </li>
-                    <li class="{{ request()->routeIs('category.show') ? 'current-menu-item' : '' }}">
-                        <a href="{{ route('category.show', 'tablets') }}">Products</a>
+                    <li class="{{ request()->routeIs('category.*') ? 'current-menu-item' : '' }}">
+                        <a href="{{ route('category.index') }}">Products</a>
                     </li>
                 </ul>
             </nav>
@@ -228,7 +270,7 @@
                 <div class="col-md-2 col-xs-12">
                     <nav class="footer__nav">
                         <ul>
-                            <li><a href="{{ route('category.show', 'tablets') }}">Products</a></li>
+                            <li><a href="{{ route('category.index') }}">Products</a></li>
                             <li><a href="{{ route('authenticity') }}">Authenticity</a></li>
                         </ul>
                     </nav>

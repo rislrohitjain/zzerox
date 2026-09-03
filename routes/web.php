@@ -33,6 +33,7 @@ Route::get('/lab-analysis', [FrontController::class, 'analysis'])->name('analysi
 Route::post('/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
 
 // Catalog Routes
+Route::get('/category', [CatalogController::class, 'allCategories'])->name('category.index');
 Route::get('/category/{slug}', [CatalogController::class, 'category'])->name('category.show');
 Route::get('/product/{slug}', [CatalogController::class, 'product'])->name('products.show');
 
