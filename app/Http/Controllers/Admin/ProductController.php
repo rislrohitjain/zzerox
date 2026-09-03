@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CatalogController;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\ProductImage;
@@ -52,7 +53,6 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
-        // Store gallery images
         if ($request->hasFile('gallery_images')) {
             foreach ($request->file('gallery_images') as $index => $gFile) {
                 $gName = time() . '_gallery_' . $index . '_' . uniqid() . '.' . $gFile->getClientOriginalExtension();
@@ -65,7 +65,7 @@ class ProductController extends Controller
             }
         }
 
-        Cache::forget('home_featured_products');
+        CatalogController::clearFileCache();
 
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully with image and gallery.');
     }
@@ -105,7 +105,6 @@ class ProductController extends Controller
 
         $product->update($validated);
 
-        // Upload additional gallery images if provided
         if ($request->hasFile('gallery_images')) {
             $currentMaxOrder = $product->images()->max('order') ?? 0;
             foreach ($request->file('gallery_images') as $index => $gFile) {
@@ -119,7 +118,8 @@ class ProductController extends Controller
             }
         }
 
-        Cache::forget('home_featured_products');
+        CatalogController::clearFileCache();
+        Cache::forget('product_detail_' . $product->slug);
 
         return redirect()->route('admin.products.index')->with('success', 'Product updated successfully.');
     }
@@ -128,13 +128,14 @@ class ProductController extends Controller
     {
         $image = ProductImage::findOrFail($imageId);
         $image->delete();
+        CatalogController::clearFileCache();
         return redirect()->back()->with('success', 'Gallery image removed.');
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-        Cache::forget('home_featured_products');
+        CatalogController::clearFileCache();
 
         return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully.');
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CatalogController;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -52,7 +53,7 @@ class CategoryController extends Controller
 
         Category::create($validated);
 
-        Cache::forget('nav_categories_tree');
+        CatalogController::clearFileCache();
 
         return redirect()->route('admin.categories.index')->with('success', 'Category created successfully with image.');
     }
@@ -87,7 +88,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        Cache::forget('nav_categories_tree');
+        CatalogController::clearFileCache();
 
         return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
     }
@@ -95,7 +96,7 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete(); // Soft delete
-        Cache::forget('nav_categories_tree');
+        CatalogController::clearFileCache();
 
         return redirect()->route('admin.categories.index')->with('success', 'Category soft-deleted successfully.');
     }
@@ -104,7 +105,7 @@ class CategoryController extends Controller
     {
         $category = Category::withTrashed()->findOrFail($id);
         $category->restore();
-        Cache::forget('nav_categories_tree');
+        CatalogController::clearFileCache();
 
         return redirect()->back()->with('success', 'Category restored successfully.');
     }
@@ -113,7 +114,7 @@ class CategoryController extends Controller
     {
         $category = Category::withTrashed()->findOrFail($id);
         $category->forceDelete();
-        Cache::forget('nav_categories_tree');
+        CatalogController::clearFileCache();
 
         return redirect()->back()->with('success', 'Category permanently deleted.');
     }
