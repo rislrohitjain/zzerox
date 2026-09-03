@@ -179,6 +179,15 @@
             <a href="{{ route('admin.subscribers.index') }}" class="nav-link {{ request()->routeIs('admin.subscribers.*') ? 'active' : '' }}">
                 <i class="bi bi-envelope-check"></i> Subscribers
             </a>
+            <a href="{{ route('admin.contacts.index') }}" class="nav-link {{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}">
+                <i class="bi bi-chat-left-text text-warning"></i> Contact Messages
+                @php
+                    $unreadCount = \App\Models\ContactMessage::where('is_read', false)->count();
+                @endphp
+                @if($unreadCount > 0)
+                    <span class="badge bg-warning text-dark ms-auto">{{ $unreadCount }}</span>
+                @endif
+            </a>
 
             @if(Auth::user() && Auth::user()->hasRole('admin'))
                 <div class="px-3 pt-3 pb-1 text-uppercase text-secondary fw-bold" style="font-size: 0.7rem;">System Administration</div>

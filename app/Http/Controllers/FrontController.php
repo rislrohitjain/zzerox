@@ -75,7 +75,16 @@ class FrontController extends Controller
             'message' => 'required|string',
         ]);
 
-        return redirect()->back()->with('success', 'Thank you for reaching out to Zerox Pharmaceuticals. Our team will get back to you shortly.');
+        \App\Models\ContactMessage::create([
+            'name' => $request->name,
+            'email' => strtolower(trim($request->email)),
+            'subject' => $request->subject,
+            'message' => $request->message,
+            'ip_address' => $request->ip(),
+            'is_read' => false,
+        ]);
+
+        return redirect()->back()->with('success', 'Thank you for reaching out to Zerox Pharmaceuticals. Your message has been saved into our database. Our team will get back to you shortly.');
     }
 
     public function analysis()

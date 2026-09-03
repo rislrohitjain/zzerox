@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\SubscriberController as AdminSubscriberController
 use App\Http\Controllers\Admin\PerformanceController as AdminPerformanceController;
 use App\Http\Controllers\Admin\RouteController as AdminRouteController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Api\V1\ApiController as RestApiController;
 
 /*
@@ -99,6 +100,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,operator
     Route::delete('subscribers/{id}', [AdminSubscriberController::class, 'destroy'])->name('subscribers.destroy');
     Route::put('subscribers/{id}/restore', [AdminSubscriberController::class, 'restore'])->name('subscribers.restore');
     Route::delete('subscribers/{id}/force', [AdminSubscriberController::class, 'forceDelete'])->name('subscribers.forceDelete');
+
+    // Contact Messages Management
+    Route::get('contacts', [AdminContactMessageController::class, 'index'])->name('contacts.index');
+    Route::put('contacts/{id}/read', [AdminContactMessageController::class, 'markAsRead'])->name('contacts.read');
+    Route::delete('contacts/{id}', [AdminContactMessageController::class, 'destroy'])->name('contacts.destroy');
 
     // Verifications Management
     Route::get('verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');
