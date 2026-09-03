@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\VerificationController as AdminVerificationController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\RoleUserController as AdminRoleUserController;
+use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,7 @@ use App\Http\Controllers\Admin\RoleUserController as AdminRoleUserController;
 |--------------------------------------------------------------------------
 */
 
-// Public Frontend Routes
+// Public Frontend Routes matching Zerox.com
 Route::get('/', [FrontController::class, 'home'])->name('home');
 Route::get('/about-us', [FrontController::class, 'about'])->name('about');
 Route::get('/contact-us', [FrontController::class, 'contact'])->name('contact');
@@ -48,11 +49,15 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,operator1'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Products Management
+    // Products Management with Gallery Images
     Route::resource('products', AdminProductController::class)->except(['show']);
+    Route::delete('products/images/{image}', [AdminProductController::class, 'destroyImage'])->name('products.images.destroy');
 
     // Categories Management
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
+
+    // Banners Management
+    Route::resource('banners', AdminBannerController::class)->except(['show']);
 
     // Verifications Management
     Route::get('verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');
@@ -60,7 +65,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,operator
     Route::post('verifications', [AdminVerificationController::class, 'store'])->name('verifications.store');
     Route::delete('verifications/{verification}', [AdminVerificationController::class, 'destroy'])->name('verifications.destroy');
 
-    // Settings Management (Admin role only)
+    // Settings & User Management (Admin role only)
     Route::middleware('role:admin')->group(function () {
         Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [AdminSettingController::class, 'update'])->name('settings.update');

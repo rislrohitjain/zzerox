@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\SiteSetting;
+use App\Models\Banner;
 use Illuminate\Support\Facades\Cache;
 
 class FrontController extends Controller
@@ -26,15 +27,19 @@ class FrontController extends Controller
     {
         $categories = $this->getCachedCategories();
 
+        $banners = Cache::rememberForever('home_banners', function () {
+            return Banner::where('is_active', true)->orderBy('order', 'asc')->get();
+        });
+
         $featuredProducts = Cache::rememberForever('home_featured_products', function () {
-            return Product::with('category')
+            return Product::with(['category', 'images'])
                 ->where('is_active', true)
                 ->latest()
-                ->take(8)
+                ->take(10)
                 ->get();
         });
 
-        return view('home', compact('categories', 'featuredProducts'));
+        return view('home', compact('categories', 'banners', 'featuredProducts'));
     }
 
     public function about()

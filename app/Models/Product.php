@@ -49,4 +49,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductVerification::class);
     }
+
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('order', 'asc');
+    }
 }

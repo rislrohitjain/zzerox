@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="card border-0 shadow-sm bg-white p-4">
-    <form action="{{ route('admin.products.store') }}" method="POST">
+    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row g-3">
             <div class="col-md-6">
@@ -38,6 +38,20 @@
                 <input type="text" name="pack_size" class="form-control" placeholder="e.g. 100 Tablets" value="{{ old('pack_size') }}">
             </div>
 
+            <!-- Main Product Image -->
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Main Product Image</label>
+                <input type="file" name="main_image" class="form-control" accept="image/*">
+                <div class="form-text">Primary image shown on catalog & product card.</div>
+            </div>
+
+            <!-- Product Gallery Images -->
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Product Image Gallery (Select Multiple)</label>
+                <input type="file" name="gallery_images[]" class="form-control" accept="image/*" multiple>
+                <div class="form-text">Select multiple images to create an interactive product gallery.</div>
+            </div>
+
             <div class="col-12">
                 <label class="form-label fw-bold">Overview Description</label>
                 <textarea name="description" rows="3" class="form-control" required>{{ old('description') }}</textarea>
@@ -66,7 +80,7 @@
             </div>
 
             <div class="col-12 mt-4">
-                <button type="submit" class="btn btn-primary px-4 me-2"><i class="bi bi-save me-1"></i> Save Product</button>
+                <button type="submit" class="btn btn-primary px-4 me-2"><i class="bi bi-save me-1"></i> Save Product & Gallery</button>
                 <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </div>

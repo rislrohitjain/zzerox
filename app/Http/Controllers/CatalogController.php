@@ -29,10 +29,9 @@ class CatalogController extends Controller
             ->with(['children', 'parent'])
             ->firstOrFail();
 
-        // Get category IDs (including self and subcategory IDs)
         $categoryIds = array_merge([$currentCategory->id], $currentCategory->children->pluck('id')->toArray());
 
-        $query = Product::with('category')->whereIn('category_id', $categoryIds)->where('is_active', true);
+        $query = Product::with(['category', 'images'])->whereIn('category_id', $categoryIds)->where('is_active', true);
 
         // Sorting
         $sort = $request->get('sort', 'name_asc');
@@ -58,12 +57,12 @@ class CatalogController extends Controller
     {
         $categories = $this->getCachedCategories();
 
-        $product = Product::with(['category.parent', 'verifications'])
+        $product = Product::with(['category.parent', 'verifications', 'images'])
             ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
 
-        $relatedProducts = Product::with('category')
+        $relatedProducts = Product::with(['category', 'images'])
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('is_active', true)

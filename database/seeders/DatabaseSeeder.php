@@ -9,6 +9,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVerification;
 use App\Models\SiteSetting;
+use App\Models\Banner;
+use App\Models\ProductImage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -186,8 +188,25 @@ class DatabaseSeeder extends Seeder
                     'chemical_characteristics' => "Chemical Name: " . $p['name'] . "\nFormula: C19H28O2 (USP Grade Standard)\nMolar Mass: 288.42 g/mol\nPurity Index: >= 99.4% HPLC Tested\nAppearance: Crystalline Micro-particulate powder / Sterile Clear Carrier Solution\nSolubility: Soluble in ethanol, benzyl benzoate, and sesame oil.",
                     'side_effects' => "Possible mild side effects include androgenic reactions (acne, mild hair thinning in genetically predisposed individuals), lipid profile alterations (temporary elevation of LDL), and transient endogenous hormone suppression. Monitor BP and liver enzymes during extended application periods.",
                     'administration_uses' => "Recommended Protocol: Administer under medical supervision or qualified therapeutic guidelines. Store between 15°C to 25°C protected from direct sunlight. Do not freeze. Verify scratch security code on official authentication portal before first use.",
-                    'image_path' => 'images/products/' . Str::slug($p['name']) . '.jpg',
+                    'image_path' => 'img/welcome-image.png',
                     'is_active' => true,
+                ]);
+
+                // Create 3 Product Gallery Images per product
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => 'img/product-verification.png',
+                    'order' => 1,
+                ]);
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => 'img/welcome-image.png',
+                    'order' => 2,
+                ]);
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => 'img/logo.png',
+                    'order' => 3,
                 ]);
 
                 $allCreatedProducts[] = $product;
@@ -196,13 +215,10 @@ class DatabaseSeeder extends Seeder
 
         // 4. Seed 100 Product Verifications
         $batches = ['ZX-2026-B1', 'ZX-2026-B2', 'ZX-2026-B3', 'ZX-2026-B4', 'ZX-2026-B5'];
-
-        // Known verification codes specified in requirements
         $knownCodes = ['ZX-8829-AB41', 'ZX-9921-DF32', 'ZX-1044-KL89', 'ZX-7734-MN22', 'ZX-3321-OP90'];
 
         $count = 0;
         foreach ($allCreatedProducts as $product) {
-            // Add 2 verifications per product = 100 total
             for ($i = 1; $i <= 2; $i++) {
                 $count++;
                 if (isset($knownCodes[$count - 1])) {
@@ -212,7 +228,7 @@ class DatabaseSeeder extends Seeder
                 }
 
                 $batch = $batches[($count % count($batches))];
-                $isVerified = ($count % 5 === 0); // Mark 20% as previously verified
+                $isVerified = ($count % 5 === 0);
 
                 ProductVerification::create([
                     'product_id' => $product->id,
@@ -225,19 +241,38 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 5. Seed Site Settings
+        // 5. Seed Site Banners (Backend Managed)
+        Banner::create([
+            'title' => 'Home Banner',
+            'subtitle' => 'Working together for a healthier world. Zerox. Life is our life\'s work.',
+            'image_path' => 'img/home-banner.png',
+            'button_text' => 'See our products',
+            'button_url' => '/category/tablets',
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Banner::create([
+            'title' => 'Product Authenticity Protection',
+            'subtitle' => 'Verify scratch code directly from master database',
+            'image_path' => 'img/authenticity-banner.png',
+            'button_text' => 'Verify Code',
+            'button_url' => '/authenticity',
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        // 6. Seed Site Settings
         $settings = [
-            ['key' => 'site_name', 'value' => 'Zerox Pharmaceuticals Ltd', 'group' => 'general'],
+            ['key' => 'site_name', 'value' => 'Zerox Pharmaceuticals', 'group' => 'general'],
             ['key' => 'company_name', 'value' => 'Zerox Pharmaceuticals Ltd', 'group' => 'general'],
             ['key' => 'contact_phone', 'value' => '+91 11 27023256', 'group' => 'contact'],
             ['key' => 'contact_email', 'value' => 'support@zzerox.com', 'group' => 'contact'],
             ['key' => 'company_address', 'value' => 'Plot No. 42, Industrial Area Phase II, New Delhi, India - 110020', 'group' => 'contact'],
-            ['key' => 'hero_title', 'value' => 'Precision Engineering in Pharmaceutical Innovation', 'group' => 'banners'],
-            ['key' => 'hero_subtitle', 'value' => 'World-Class Anabolic Steroids, Peptides, and rDNA Human Growth Hormone Certified Under Global GMP Standards.', 'group' => 'banners'],
-            ['key' => 'meta_title', 'value' => 'Zerox Pharmaceuticals - Genuine Pharmaceutical Products & Product Authentication', 'group' => 'seo'],
-            ['key' => 'meta_description', 'value' => 'Official portal of Zerox Pharmaceuticals. Verify product authenticity using our scratch code system and explore high-purity tablets, injectables, HGH, and peptides.', 'group' => 'seo'],
-            ['key' => 'meta_keywords', 'value' => 'Zerox Pharmaceuticals, Zerox anabolic, Anavar, Sustanon, Somatropin, BPC-157, Product Verification', 'group' => 'seo'],
-            ['key' => 'google_analytics', 'value' => '<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEROXDEMO12"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-ZEROXDEMO12");</script>', 'group' => 'seo'],
+            ['key' => 'hero_title', 'value' => 'Working together for a healthier world. Zerox. Life is our life\'s work.', 'group' => 'banners'],
+            ['key' => 'hero_subtitle', 'value' => 'We like to be industry leaders and role models in an ever-changing environment.', 'group' => 'banners'],
+            ['key' => 'meta_title', 'value' => 'Zerox – Pharmaceuticals', 'group' => 'seo'],
+            ['key' => 'meta_description', 'value' => 'Zerox Pharmaceuticals Ltd works for the benefit of citizens of India and around the world, improving the quality of life.', 'group' => 'seo'],
         ];
 
         foreach ($settings as $setting) {
