@@ -1,15 +1,40 @@
 {
-  "version": 2,
-  "framework": null,
-  "functions": {
-    "api/index.php": { "runtime": "vercel-php@0.7.1" }
-  },
-  "routes": [
-    { "src": "/build/(.*)", "dest": "/public/build/$1" },
-    { "src": "/css/(.*)", "dest": "/public/css/$1" },
-    { "src": "/js/(.*)", "dest": "/public/js/$1" },
-    { "src": "/images/(.*)", "dest": "/public/images/$1" },
-    { "src": "/(favicon.ico|robots.txt)", "dest": "/public/$1" },
-    { "src": "/(.*)", "dest": "/api/index.php" }
-  ]
+    "version": 2,
+    "framework": null,
+    "functions": {
+        "api/index.php": {
+            "runtime": "vercel-php@0.6.0"
+        }
+    },
+    "routes": [
+        {
+            "src": "/(css|js|img|images|fonts|build|favicon\\.ico|robots\\.txt)(.*)",
+            "dest": "/public/$1$2"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/api/index.php"
+        }
+    ],
+    "env": {
+        "APP_ENV": "production",
+        "APP_DEBUG": "false",
+        "APP_URL": "https://zzerox.vercel.app",
+        "APP_CONFIG_CACHE": "/tmp/config.php",
+        "APP_EVENTS_CACHE": "/tmp/events.php",
+        "APP_PACKAGES_CACHE": "/tmp/packages.php",
+        "APP_ROUTES_CACHE": "/tmp/routes.php",
+        "APP_SERVICES_CACHE": "/tmp/services.php",
+        "VIEW_COMPILED_PATH": "/tmp/views",
+        "CACHE_DRIVER": "file",
+        "CACHE_DIR": "/tmp/cache",
+        "LOG_CHANNEL": "stderr",
+        "SESSION_DRIVER": "cookie",
+        "DB_CONNECTION": "mysql",
+        "DB_HOST": "10.68.128.254",
+        "DB_PORT": "3306",
+        "DB_DATABASE": "zzerox",
+        "DB_USERNAME": "hteapp",
+        "DB_PASSWORD": "hteapp@123#"
+    }
 }

@@ -44,6 +44,16 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
+// Prepare Vercel serverless writable directories if running under Vercel
+if (isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL']) || getenv('VERCEL')) {
+    if (!is_dir('/tmp/views')) {
+        @mkdir('/tmp/views', 0755, true);
+    }
+    if (!is_dir('/tmp/cache')) {
+        @mkdir('/tmp/cache', 0755, true);
+    }
+}
+
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
