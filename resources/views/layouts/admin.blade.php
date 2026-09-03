@@ -26,6 +26,7 @@
         body {
             font-family: 'Outfit', sans-serif;
             background-color: #f8fafc;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .admin-sidebar {
@@ -83,6 +84,67 @@
             border-bottom: 1px solid #e2e8f0;
             padding: 0.75rem 2rem;
             margin-left: 260px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* 4 Custom Color Themes: Light, Dark, Gray, White */
+        body[data-theme="dark"] {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+        }
+        body[data-theme="dark"] .card {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+            border: 1px solid #334155 !important;
+        }
+        body[data-theme="dark"] .admin-navbar {
+            background-color: #1e293b !important;
+            border-bottom: 1px solid #334155 !important;
+            color: #ffffff !important;
+        }
+        body[data-theme="dark"] .table {
+            color: #cbd5e1 !important;
+        }
+        body[data-theme="dark"] .table-light {
+            background-color: #334155 !important;
+            color: #ffffff !important;
+        }
+        body[data-theme="dark"] .text-dark {
+            color: #f1f5f9 !important;
+        }
+        body[data-theme="dark"] .bg-light {
+            background-color: #334155 !important;
+            color: #ffffff !important;
+        }
+
+        body[data-theme="gray"] {
+            background-color: #334155 !important;
+            color: #f8fafc !important;
+        }
+        body[data-theme="gray"] .card {
+            background-color: #475569 !important;
+            color: #ffffff !important;
+            border: 1px solid #64748b !important;
+        }
+        body[data-theme="gray"] .admin-navbar {
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+        }
+        body[data-theme="gray"] .text-dark {
+            color: #ffffff !important;
+        }
+        body[data-theme="gray"] .bg-light {
+            background-color: #334155 !important;
+            color: #ffffff !important;
+        }
+
+        body[data-theme="white"] {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+        body[data-theme="white"] .card {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
         }
     </style>
     @yield('styles')
@@ -143,7 +205,7 @@
         </div>
     </div>
 
-    <!-- Top Admin Bar -->
+    <!-- Top Admin Bar with Theme Switcher Dropdown -->
     <div class="admin-navbar d-flex justify-content-between align-items-center">
         <div>
             <h5 class="m-0 fw-bold">@yield('page_title', 'Dashboard')</h5>
@@ -152,6 +214,20 @@
             @if((\App\Models\SiteSetting::get('site_under_maintenance', '0')) == '1')
                 <span class="badge bg-warning text-dark"><i class="bi bi-tools me-1"></i> Maintenance Mode Active</span>
             @endif
+
+            <!-- 4 Theme Selector Switcher -->
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1" type="button" id="themeSelectorBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-palette-fill text-primary"></i> <span id="currentThemeName">Theme</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="themeSelectorBtn">
+                    <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" onclick="setAdminTheme('light'); return false;"><i class="bi bi-sun-fill text-warning"></i> Light Theme</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" onclick="setAdminTheme('dark'); return false;"><i class="bi bi-moon-stars-fill text-primary"></i> Dark Theme</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" onclick="setAdminTheme('gray'); return false;"><i class="bi bi-circle-half text-secondary"></i> Slate Gray Theme</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" onclick="setAdminTheme('white'); return false;"><i class="bi bi-square-fill text-muted"></i> Ultra White Theme</a></li>
+                </ul>
+            </div>
+
             <a href="{{ route('admin.profile.edit') }}" class="d-flex align-items-center gap-2 text-decoration-none">
                 @if(Auth::user()->avatar)
                     <img src="{{ asset(Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="rounded-circle border border-2 border-primary" style="width: 32px; height: 32px; object-fit: cover;">
@@ -162,6 +238,7 @@
                 @endif
                 <span class="text-secondary small">Logged in as: <strong class="text-dark">{{ Auth::user()->name }}</strong> ({{ Auth::user()->roles->pluck('name')->implode(', ') }})</span>
             </a>
+
             <form action="{{ route('logout') }}" method="POST" class="d-inline">
                 @csrf
                 <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-power me-1"></i> Logout</button>
@@ -188,8 +265,20 @@
         @yield('content')
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Bootstrap JS & Theme Manager Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function setAdminTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('admin_theme', theme);
+            const label = document.getElementById('currentThemeName');
+            if (label) label.textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
+        }
+        (function() {
+            const savedTheme = localStorage.getItem('admin_theme') || 'light';
+            setAdminTheme(savedTheme);
+        })();
+    </script>
     @yield('scripts')
 </body>
 </html>

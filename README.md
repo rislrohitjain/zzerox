@@ -1,64 +1,128 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Zerox Pharmaceuticals Ltd - Master E-Commerce & Admin Web Portal
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A high-performance Laravel web application matching the official [Zerox.com](https://zzerox.com) digital platform, featuring dynamic catalog management, anti-counterfeit security code verification, interactive location pin map picker, RESTful API v1, Swagger UI playground, admin themes, and Vercel serverless deployment.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🌟 Key Application Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Dynamic Brand Identity**: Dynamic Header Logo, Footer Logo, and Multi-format Favicon PNG/ICO upload & display.
+- **Master Product Catalog**: Responsive catalog (`/category`) featuring 195+ realistic pharmaceutical products across 13 subcategories, interactive product gallery photo lightboxes, and Zerox gold accent pagination.
+- **Anti-Counterfeit Scratch Code Verification**: Security code verification system (`/authenticity`) with IP logging, verification timestamps, and counterfeit warnings.
+- **Interactive Location Pin Picker Map**: Drag & drop Leaflet map picker in Admin Settings for physical address coordinates (`map_latitude`, `map_longitude`).
+- **CKEditor 5 & SEO Permalinks**: Rich text editing on product descriptions, chemical specs, and side effects with custom URL Slug auto-generators.
+- **Admin Panel Theme Switcher**: Toggle between 4 distinct visual themes (**Dark**, **Light**, **Slate Gray**, **Ultra White**) with instant `localStorage` persistence.
+- **Admin Profile & Social Management**: Profile view/edit for logged-in users with avatar photo uploads, mobile hotline, bio summary, and social links (WhatsApp, LinkedIn, Twitter/X, Telegram, Facebook).
+- **RESTful API v1 & Swagger UI**: Full REST API endpoints (`/api/v1/...`) with OpenAPI 3.0 specification JSON and an interactive Swagger UI API playground (`/admin/swagger`).
+- **Site Performance & Speed Manager**: Real-time database latency benchmarks, memory peak usage, disk metrics, and 1-Click speed optimization buttons (Config, Routes, Blade Views, and DB Indexes).
+- **Vercel Serverless Production Ready**: Configured with `vercel.json` (`vercel-php@0.7.2`), `api/index.php`, and `/tmp` writable storage handlers for instant Vercel cloud deployment.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🚀 How to Run & Setup from GitHub
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Prerequisites
+- **PHP**: 8.1 or 8.2+
+- **Composer**: 2.x
+- **Database**: MySQL 5.7 / 8.0+ or MariaDB
+- **Node.js / NPM** (Optional)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+### Step 1: Clone Repository
+```bash
+git clone https://github.com/rislrohitjain/zzerox.git
+cd zzerox
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+---
 
-### Premium Partners
+### Step 2: Install Composer Dependencies
+```bash
+composer install
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+---
 
-## Contributing
+### Step 3: Configure Environment
+Copy the example environment file and generate the application encryption key:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+### Step 4: Configure Database Connection
+Open your `.env` file and set your MySQL database credentials:
+```ini
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=zzerox
+DB_USERNAME=root
+DB_PASSWORD=your_mysql_password
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+### Step 5: Run Database Migrations & Data Seeder
+Execute the master database migrations and seeder to populate all 195 products, 585 gallery images, 390 verification scratch codes, and default site settings:
+```bash
+php artisan migrate:fresh --seed
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+### Step 6: Default Admin Login Credentials
+Access the Admin Panel at `/login` or `/admin`:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Super Admin** | `admin@zzerox.com` | `AdminPass@2026` |
+| **Operator 1** | `operator@zzerox.com` | `OperatorPass@2026` |
+
+---
+
+### Step 7: Launch Local Server
+Start the local Laravel development server:
+```bash
+php artisan serve --host=0.0.0.0 --port=8000
+```
+Open your browser at: [http://localhost:8000](http://localhost:8000) or [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+---
+
+### Step 8: Deploy to Vercel Serverless Cloud
+To deploy your application live to Vercel:
+```bash
+# 1. Install Vercel CLI (if not already installed)
+npm install -g vercel
+
+# 2. Deploy to Production
+vercel --prod
+```
+Live Production URL: [https://zzerox.vercel.app](https://zzerox.vercel.app)
+
+---
+
+## 📡 RESTful API Endpoints (`/api/v1`)
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/products` | List active products with pagination & search |
+| `GET` | `/api/v1/products/{slug}` | Get single product details & gallery |
+| `GET` | `/api/v1/categories` | Get category tree & subcategories |
+| `GET` | `/api/v1/categories/{slug}` | Get category with paginated products |
+| `POST` | `/api/v1/verify-code` | Verify packaging security scratch code |
+| `GET` | `/api/v1/banners` | List active hero banners |
+| `GET` | `/api/v1/settings` | Get public site settings & location map coords |
+| `POST` | `/api/v1/subscribe` | Subscribe email to official newsletter |
+| `GET` | `/api/v1/health` | System health & DB latency status |
+| `GET` | `/api/v1/openapi.json` | OpenAPI 3.0 specification JSON |
+| `GET` | `/admin/swagger` | Interactive Admin Swagger UI Playground |
+
+---
+
+## 📄 License
+This project is developed for **Zerox Pharmaceuticals Ltd**. All rights reserved.
