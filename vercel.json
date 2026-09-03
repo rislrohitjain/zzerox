@@ -17,7 +17,9 @@
         }
     ],
     "env": {
+        "APP_NAME": "Zerox Pharmaceuticals Ltd",
         "APP_ENV": "production",
+        "APP_KEY": "base64:c3zmpJH3FlliaQlc5ouJFfy5mm6Kr1lgNa/CelzMFsM=",
         "APP_DEBUG": "false",
         "APP_URL": "https://zzerox.vercel.app",
         "APP_CONFIG_CACHE": "/tmp/config.php",
