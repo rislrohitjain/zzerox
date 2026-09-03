@@ -1,0 +1,253 @@
+```markdown
+### MASTER PROMPT: AUTONOMOUS MULTI-AGENT FULL-STACK LARAVEL 8 IMPLEMENTATION
+
+You are the Lead Autonomous Software Engineering Team executing through specialized agents across terminal, file system, and browser surfaces. Build, optimize, seed, and configure the complete enterprise pharmaceutical web application modeled after [Zerox Pharmaceuticals](https://zzerox.com/).
+
+---
+
+### AGENT TEAM ROLES & ASSIGNMENTS
+
+* **Agent 1 (DB Architect & Migrations Specialist):**
+  * Scaffold database tables, recursive categories, indexing, and seed 50 detailed pharmaceutical products across 5 categories.
+* **Agent 2 (Backend & Security Engineer):**
+  * Configure authentication, custom RBAC (`admin`, `operator1`), product scratch-code verification engine, dynamic settings manager, and search APIs.
+* **Agent 3 (Frontend & Performance Engineer):**
+  * Build responsive Bootstrap 5 views matching [Zerox](https://zzerox.com/) (desktop, tablet, mobile), product detail layouts (Chemical Characteristics, Side Effects, Administration/Uses), debounced live search, and query caching.
+* **Agent 4 (DevOps, IIS & Deployment Engineer):**
+  * Configure Windows IIS `web.config` rewrite rules, FastCGI handler, local IP binding, GitHub Actions workflow, and Vercel serverless configuration.
+
+---
+
+### STEP 1: ENVIRONMENT & DATABASE CONFIGURATION
+
+Set up `.env` with the specified database connection:
+
+```env
+APP_NAME="Zerox Pharmaceuticals Ltd"
+APP_ENV=production
+APP_KEY=
+APP_DEBUG=false
+APP_URL=http://localhost
+
+LOG_CHANNEL=stack
+LOG_LEVEL=error
+
+DB_CONNECTION=mysql
+DB_HOST=10.68.128.254
+DB_PORT=3306
+DB_DATABASE=zzerox
+DB_USERNAME=hteapp
+DB_PASSWORD=hteapp@123#
+
+CACHE_DRIVER=file
+SESSION_DRIVER=file
+QUEUE_CONNECTION=sync
+
+```
+
+Generate application key: `php artisan key:generate`
+
+---
+
+### STEP 2: DATABASE SCHEMAS & MIGRATIONS
+
+Create standard Laravel migrations for all entities:
+
+1. **`roles` & `role_user`:**
+* `roles`: `id`, `name` (unique: `admin`, `operator1`), `description`, timestamps.
+* `role_user`: `user_id` (foreign key), `role_id` (foreign key).
+
+
+2. **`categories`:**
+* `id`, `parent_id` (unsignedBigInteger, nullable, foreign key on `categories.id` cascade delete), `name`, `slug` (unique indexed), `description` (text, nullable), `order` (integer default 0), `meta_title` (nullable), `meta_description` (nullable), timestamps.
+
+
+3. **`products`:**
+* `id`, `category_id` (unsignedBigInteger, foreign key on `categories.id`), `name`, `slug` (unique indexed), `sku` (indexed), `dosage_form`, `pack_size`, `description` (text), `chemical_characteristics` (longText), `side_effects` (longText), `administration_uses` (longText), `image_path`, `is_active` (boolean default true), timestamps.
+
+
+4. **`product_verifications`:**
+* `id`, `product_id` (unsignedBigInteger, nullable, foreign key on `categories.id` or `products.id`), `batch_number` (indexed), `security_code` (unique indexed), `is_verified` (boolean default false), `verified_at` (nullable timestamp), `ip_address` (nullable string), timestamps.
+
+
+5. **`site_settings`:**
+* `id`, `key` (unique indexed), `value` (longText, nullable), `group` (string: `general`, `seo`, `contact`, `banners`), timestamps.
+
+
+
+---
+
+### STEP 3: DATABASE SEEDER (50 DUMMY PRODUCTS & COMPLETE DATA)
+
+Run `php artisan make:seeder DatabaseSeeder`. Seed the following:
+
+1. **Roles & Users:**
+* Roles: `admin` and `operator1`.
+* User 1: `admin@zzerox.com`, password `AdminPass@2026`, assigned `admin`.
+* User 2: `operator@zzerox.com`, password `OperatorPass@2026`, assigned `operator1`.
+
+
+2. **Categories (Parent & N-Level Hierarchy):**
+* Parents: `Tablets`, `Injectables 1 ml`, `HGH`, `Peptides`, `Injectables 10 ml`.
+* Under each parent, support optional sub-categories (e.g., `Anabolic Tablets`, `Recovery Peptides`).
+
+
+3. **Products (Exactly 10 per category = 50 total):**
+* **Tablets (10):** Anavar 10mg, Dianabol 10mg, Winstrol 10mg, Anadrol 50mg, Turinabol 10mg, Clenbuterol 40mcg, Proviron 25mg, Cytomel T3 25mcg, Halotestin 10mg, Primobolan Oral 25mg.
+* **Injectables 1 ml (10):** Testorox Prop 100mg/ml, Testorox Mix (Sustanon) 250mg/ml, Decarox 100mg/ml, Trenrox A 100mg/ml, Masterox P 100mg/ml, Primorox 100mg/ml, Boldrox 200mg/ml, Testorox E 250mg/ml, Nandrorox F 100mg/ml, Trenrox E 200mg/ml.
+* **HGH (10):** Somatropin 10IU, Zerotropin 12IU, Norditropin 15IU, Genotropin 16IU, Humatrope 18IU, Omnitrope 10IU, Saizen 20IU, Hygetropin 8IU, Jintropin 10IU, Ansomone 10IU.
+* **Peptides (10):** BPC-157 5mg, TB-500 5mg, CJC-1295 DAC 2mg, Ipamorelin 2mg, GHRP-6 5mg, GHRP-2 5mg, Melanotan II 10mg, Sermorelin 2mg, PEG-MGF 2mg, Hexarelin 2mg.
+* **Injectables 10 ml (10):** Testorox Enanthate 10ml, Testorox Cypionate 10ml, Decarox 250 10ml, Boldenone Undecylenate 10ml, Trenrox Hexa 10ml, Sustarox 250 10ml, Masterox E 200 10ml, Primobolan Depot 100 10ml, Trenbolone Tri-Blend 10ml, Mass-Stack Injection 10ml.
+* Every product must include realistic text for `chemical_characteristics`, `side_effects`, and `administration_uses`.
+
+
+4. **Product Verifications:**
+* 100 security codes generated across batches (e.g., `ZX-8829-AB41`, `ZX-9921-DF32`, etc.).
+
+
+5. **Site Settings:**
+* Global contact details: Phone `+91 11 27023256`, Email `support@zzerox.com`, company address, hero banner texts, OpenGraph meta tags, and Google Analytics snippet container.
+
+
+
+---
+
+### STEP 4: BACKEND CONTROLLERS & OPTIMIZATION
+
+1. **Query Caching & High Performance:**
+* Wrap navigation menus, category trees, and global site settings in `Cache::rememberForever()` and clear on admin update.
+* Eager-load relations (`Product::with('category')`) to eliminate $N+1$ query bottlenecks.
+* Add database indexes on `slug`, `sku`, `batch_number`, and `security_code`.
+
+
+2. **Controllers:**
+* `FrontController`: `home()`, `about()`, `contact()`, `submitContact()`, `analysis()`.
+* `CatalogController`: `category($slug)` (paginated with sidebar tree), `product($slug)` (fetches product details, related products, and verified status).
+* `VerificationController`:
+* `index()`: Authenticity page.
+* `verify(Request $request)`: Validates security code via AJAX/POST against `product_verifications`. Returns authentic status, product details, batch number, or counterfeit warning. Rate-limited to 10 requests/min per IP.
+
+
+* `SearchController`: Debounced AJAX live search querying `products.name` and `categories.name`.
+* `Admin\DashboardController`, `Admin\ProductController`, `Admin\CategoryController`, `Admin\VerificationController`, `Admin\SettingController`, `Admin\RoleUserController`.
+
+
+3. **Middleware:**
+* Custom `RoleMiddleware`: Check user role against allowed routes (`admin` vs `operator1`).
+
+
+
+---
+
+### STEP 5: FRONTEND ARCHITECTURE (BOOTSTRAP 5 & RESPONSIVE)
+
+1. **Master Layout (`layouts/app.blade.php`):**
+* Clean Bootstrap 5.3 CDN / compiled CSS with custom overrides.
+* Header: Brand logo, category dropdowns, Search bar modal, Authenticity CTA button.
+* Dynamic meta tags: Title, Description, OpenGraph, and Twitter Cards from `site_settings`.
+* Footer: Company credentials, quick links, contact info (`support@zzerox.com`, `+91 11 27023256`), and copyright statement.
+
+
+2. **Page Views:**
+* `home.blade.php`: Fast hero slider, category cards (`Tablets`, `Injectables 1 ml`, `HGH`, `Peptides`, `Injectables 10 ml`), featured products, quick verification widget.
+* `about.blade.php`: Corporate quality standards and GMP/ISO manufacturing narrative.
+* `analysis.blade.php`: Lab tests, certificate downloads, and purity test summaries.
+* `contact.blade.php`: Responsive contact form with CSRF token and Google Maps embed placeholder.
+* `products/category.blade.php`: Side navigation with n-level category accordion, responsive card grid, and sort dropdown.
+* `products/show.blade.php`: Product image gallery, dosage form, pack size, tabbed navigation for **Chemical Characteristics**, **Side Effects**, and **Administration & Uses**, plus batch authenticity badge.
+* `authenticity.blade.php`: Central security scratch-code validation box with immediate interactive feedback (Valid, Previously Verified, or Invalid).
+
+
+3. **Admin Panel (`layouts/admin.blade.php`):**
+* Responsive sidebar dashboard.
+* Full CRUD interfaces for Products, Categories (hierarchical selector), Verifications, Settings, and Users/Roles.
+
+
+
+---
+
+### STEP 6: LOCAL IIS SERVER & DEPLOYMENT SPECS
+
+1. **Local IIS `public/web.config`:**
+Generate the complete IIS configuration file in `/public/web.config`:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <system.webServer>
+        <rewrite>
+            <rules>
+                <rule name="Imported Rule 1" stopProcessing="true">
+                    <match url="^" ignoreCase="false" />
+                    <conditions logicalGrouping="MatchAll">
+                        <add input="{HTTP_AUTHORIZATION}" ignoreCase="false" />
+                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+                        <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+                    </conditions>
+                    <action type="Rewrite" url="index.php" />
+                </rule>
+            </rules>
+        </rewrite>
+        <defaultDocument>
+            <files>
+                <clear />
+                <add value="index.php" />
+            </files>
+        </defaultDocument>
+        <httpProtocol>
+            <customHeaders>
+                <add name="X-Frame-Options" value="SAMEORIGIN" />
+                <add name="X-Content-Type-Options" value="nosniff" />
+            </customHeaders>
+        </httpProtocol>
+    </system.webServer>
+</configuration>
+
+```
+
+
+2. **Local IIS Binding Instructions:**
+* In IIS Manager: Add Website -> Point Physical Path to the project's `/public` folder.
+* Bind IP to Local IP (e.g., `10.x.x.x` or `192.168.x.x`) on Port `80` or `8080`.
+* Ensure `IIS_IUSRS` and `IUSR` have read/write permissions on `/storage` and `/bootstrap/cache`.
+
+
+3. **Vercel Deployment (`vercel.json`):**
+```json
+{
+  "version": 2,
+  "framework": null,
+  "functions": {
+    "api/index.php": { "runtime": "vercel-php@0.7.1" }
+  },
+  "routes": [
+    { "src": "/build/(.*)", "dest": "/public/build/$1" },
+    { "src": "/css/(.*)", "dest": "/public/css/$1" },
+    { "src": "/js/(.*)", "dest": "/public/js/$1" },
+    { "src": "/images/(.*)", "dest": "/public/images/$1" },
+    { "src": "/(favicon.ico|robots.txt)", "dest": "/public/$1" },
+    { "src": "/(.*)", "dest": "/api/index.php" }
+  ]
+}
+
+```
+
+
+4. **GitHub CI/CD (`.github/workflows/deploy.yml`):**
+* Action workflow covering Composer install, PHPUnit testing, and automated deployment pushes.
+
+
+
+---
+
+### STEP 7: EXECUTION COMMANDS
+
+Execute in order:
+
+1. `composer install --optimize-autoloader --no-dev`
+2. `php artisan migrate:fresh --seed`
+3. `php artisan config:cache && php artisan route:cache && php artisan view:cache`
+4. Test front-end routes and verify batch authentication via scratch-code lookup.
+
+```
+
+```

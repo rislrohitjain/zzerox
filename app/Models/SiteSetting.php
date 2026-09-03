@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+
+class SiteSetting extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'key',
+        'value',
+        'group',
+    ];
+
+    public static function get($key, $default = null)
+    {
+        $settings = Cache::rememberForever('site_settings_all', function () {
+            return static::pluck('value', 'key')->all();
+        });
+
+        return $settings[$key] ?? $default;
+    }
+
+    public static function set($key, $value, $group = 'general')
+    {
+        $setting = static::updateOrCreate(['key' => $key], ['value' => $value, 'group' => $group]);
+        Cache::forget('site_settings_all');
+        return $setting;
+    }
+
+    public static function clearCache()
+    {
+        Cache::forget('site_settings_all');
+    }
+}
