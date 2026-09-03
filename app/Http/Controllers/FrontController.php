@@ -13,31 +13,43 @@ class FrontController extends Controller
 {
     protected function getCachedCategories()
     {
-        return Cache::rememberForever('nav_categories_tree', function () {
-            return Category::whereNull('parent_id')
-                ->with(['children' => function ($query) {
-                    $query->orderBy('order', 'asc');
-                }])
-                ->orderBy('order', 'asc')
-                ->get();
-        });
+        try {
+            return Cache::rememberForever('nav_categories_tree', function () {
+                return Category::whereNull('parent_id')
+                    ->with(['children' => function ($query) {
+                        $query->orderBy('order', 'asc');
+                    }])
+                    ->orderBy('order', 'asc')
+                    ->get();
+            });
+        } catch (\Throwable $e) {
+            return collect([]);
+        }
     }
 
     public function home()
     {
         $categories = $this->getCachedCategories();
 
-        $banners = Cache::rememberForever('home_banners', function () {
-            return Banner::where('is_active', true)->orderBy('order', 'asc')->get();
-        });
+        try {
+            $banners = Cache::rememberForever('home_banners', function () {
+                return Banner::where('is_active', true)->orderBy('order', 'asc')->get();
+            });
+        } catch (\Throwable $e) {
+            $banners = collect([]);
+        }
 
-        $featuredProducts = Cache::rememberForever('home_featured_products', function () {
-            return Product::with(['category', 'images'])
-                ->where('is_active', true)
-                ->latest()
-                ->take(10)
-                ->get();
-        });
+        try {
+            $featuredProducts = Cache::rememberForever('home_featured_products', function () {
+                return Product::with(['category', 'images'])
+                    ->where('is_active', true)
+                    ->latest()
+                    ->take(10)
+                    ->get();
+            });
+        } catch (\Throwable $e) {
+            $featuredProducts = collect([]);
+        }
 
         return view('home', compact('categories', 'banners', 'featuredProducts'));
     }

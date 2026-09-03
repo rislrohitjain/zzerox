@@ -11,26 +11,34 @@ class CatalogController extends Controller
 {
     protected function getCachedCategories()
     {
-        return Cache::rememberForever('nav_categories_tree', function () {
-            return Category::whereNull('parent_id')
-                ->with(['children' => function ($query) {
-                    $query->orderBy('order', 'asc');
-                }])
-                ->orderBy('order', 'asc')
-                ->get();
-        });
+        try {
+            return Cache::rememberForever('nav_categories_tree', function () {
+                return Category::whereNull('parent_id')
+                    ->with(['children' => function ($query) {
+                        $query->orderBy('order', 'asc');
+                    }])
+                    ->orderBy('order', 'asc')
+                    ->get();
+            });
+        } catch (\Throwable $e) {
+            return collect([]);
+        }
     }
 
     public function allCategories()
     {
         $categories = $this->getCachedCategories();
 
-        $allParents = Cache::rememberForever('all_categories_master', function () {
-            return Category::whereNull('parent_id')
-                ->with(['children.products', 'products'])
-                ->orderBy('order', 'asc')
-                ->get();
-        });
+        try {
+            $allParents = Cache::rememberForever('all_categories_master', function () {
+                return Category::whereNull('parent_id')
+                    ->with(['children.products', 'products'])
+                    ->orderBy('order', 'asc')
+                    ->get();
+            });
+        } catch (\Throwable $e) {
+            $allParents = collect([]);
+        }
 
         return view('products.index', compact('categories', 'allParents'));
     }
@@ -39,35 +47,41 @@ class CatalogController extends Controller
     {
         $categories = $this->getCachedCategories();
 
-        $currentCategory = Cache::remember('cat_by_slug_' . $slug, 3600, function () use ($slug) {
-            return Category::where('slug', $slug)
-                ->with(['children', 'parent'])
-                ->firstOrFail();
-        });
+        try {
+            $currentCategory = Cache::remember('cat_by_slug_' . $slug, 3600, function () use ($slug) {
+                return Category::where('slug', $slug)
+                    ->with(['children', 'parent'])
+                    ->firstOrFail();
+            });
 
-        $page = $request->get('page', 1);
-        $sort = $request->get('sort', 'name_asc');
-        $cacheKey = "cat_prods_{$slug}_sort_{$sort}_page_{$page}";
+            $page = $request->get('page', 1);
+            $sort = $request->get('sort', 'name_asc');
+            $cacheKey = "cat_prods_{$slug}_sort_{$sort}_page_{$page}";
 
-        $products = Cache::remember($cacheKey, 1800, function () use ($currentCategory, $sort) {
-            $categoryIds = array_merge([$currentCategory->id], $currentCategory->children->pluck('id')->toArray());
-            $query = Product::with(['category', 'images'])->whereIn('category_id', $categoryIds)->where('is_active', true);
+            $products = Cache::remember($cacheKey, 1800, function () use ($currentCategory, $sort) {
+                $categoryIds = array_merge([$currentCategory->id], $currentCategory->children->pluck('id')->toArray());
+                $query = Product::with(['category', 'images'])->whereIn('category_id', $categoryIds)->where('is_active', true);
 
-            switch ($sort) {
-                case 'name_desc':
-                    $query->orderBy('name', 'desc');
-                    break;
-                case 'newest':
-                    $query->orderBy('created_at', 'desc');
-                    break;
-                case 'name_asc':
-                default:
-                    $query->orderBy('name', 'asc');
-                    break;
-            }
+                switch ($sort) {
+                    case 'name_desc':
+                        $query->orderBy('name', 'desc');
+                        break;
+                    case 'newest':
+                        $query->orderBy('created_at', 'desc');
+                        break;
+                    case 'name_asc':
+                    default:
+                        $query->orderBy('name', 'asc');
+                        break;
+                }
 
-            return $query->paginate(12)->withQueryString();
-        });
+                return $query->paginate(12)->withQueryString();
+            });
+        } catch (\Throwable $e) {
+            $currentCategory = new Category(['name' => ucfirst($slug), 'description' => 'Pharmaceutical Category']);
+            $products = (new Product())->paginate(12);
+            $sort = 'name_asc';
+        }
 
         return view('products.category', compact('categories', 'currentCategory', 'products', 'sort'));
     }
@@ -76,30 +90,36 @@ class CatalogController extends Controller
     {
         $categories = $this->getCachedCategories();
 
-        $product = Cache::remember('product_detail_' . $slug, 1800, function () use ($slug) {
-            return Product::with(['category.parent', 'verifications', 'images'])
-                ->where('slug', $slug)
-                ->where('is_active', true)
-                ->firstOrFail();
-        });
+        try {
+            $product = Cache::remember('product_detail_' . $slug, 1800, function () use ($slug) {
+                return Product::with(['category.parent', 'verifications', 'images'])
+                    ->where('slug', $slug)
+                    ->where('is_active', true)
+                    ->firstOrFail();
+            });
 
-        $relatedProducts = Cache::remember('product_related_' . $slug, 1800, function () use ($product) {
-            return Product::with(['category', 'images'])
-                ->where('category_id', $product->category_id)
-                ->where('id', '!=', $product->id)
-                ->where('is_active', true)
-                ->take(4)
-                ->get();
-        });
+            $relatedProducts = Cache::remember('product_related_' . $slug, 1800, function () use ($product) {
+                return Product::with(['category', 'images'])
+                    ->where('category_id', $product->category_id)
+                    ->where('id', '!=', $product->id)
+                    ->where('is_active', true)
+                    ->take(4)
+                    ->get();
+            });
+        } catch (\Throwable $e) {
+            abort(404);
+        }
 
         return view('products.show', compact('categories', 'product', 'relatedProducts'));
     }
 
     public static function clearFileCache()
     {
-        Cache::forget('nav_categories_tree');
-        Cache::forget('all_categories_master');
-        Cache::forget('home_banners');
-        Cache::forget('home_featured_products');
+        try {
+            Cache::forget('nav_categories_tree');
+            Cache::forget('all_categories_master');
+            Cache::forget('home_banners');
+            Cache::forget('home_featured_products');
+        } catch (\Throwable $e) {}
     }
 }

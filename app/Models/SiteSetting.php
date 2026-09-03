@@ -18,22 +18,32 @@ class SiteSetting extends Model
 
     public static function get($key, $default = null)
     {
-        $settings = Cache::rememberForever('site_settings_all', function () {
-            return static::pluck('value', 'key')->all();
-        });
+        try {
+            $settings = Cache::rememberForever('site_settings_all', function () {
+                return static::pluck('value', 'key')->all();
+            });
 
-        return $settings[$key] ?? $default;
+            return $settings[$key] ?? $default;
+        } catch (\Throwable $e) {
+            return $default;
+        }
     }
 
     public static function set($key, $value, $group = 'general')
     {
-        $setting = static::updateOrCreate(['key' => $key], ['value' => $value, 'group' => $group]);
-        Cache::forget('site_settings_all');
-        return $setting;
+        try {
+            $setting = static::updateOrCreate(['key' => $key], ['value' => $value, 'group' => $group]);
+            Cache::forget('site_settings_all');
+            return $setting;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     public static function clearCache()
     {
-        Cache::forget('site_settings_all');
+        try {
+            Cache::forget('site_settings_all');
+        } catch (\Throwable $e) {}
     }
 }
