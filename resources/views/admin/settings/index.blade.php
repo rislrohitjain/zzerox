@@ -3,6 +3,19 @@
 @section('title', 'Site Settings - Zerox Admin')
 @section('page_title', 'Dynamic System & Site Settings')
 
+@section('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    #adminPickerMap {
+        height: 380px;
+        width: 100%;
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        margin-top: 15px;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="card border-0 shadow-sm bg-white p-4">
     <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
@@ -10,7 +23,7 @@
         <ul class="nav nav-tabs fw-bold mb-4" id="settingsTabs" role="tablist">
             <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#generalTab"><i class="bi bi-gear me-1"></i> General & System State</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mediaTab"><i class="bi bi-image me-1"></i> Logo & Favicon</a></li>
-            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#contactTab"><i class="bi bi-geo-alt me-1"></i> Contact & Location Map</a></li>
+            <li class="nav-item"><a class="nav-link" id="contactTabLink" data-bs-toggle="tab" href="#contactTab"><i class="bi bi-geo-alt me-1"></i> Contact & Location Map</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#seoTab"><i class="bi bi-search me-1"></i> SEO & Meta</a></li>
         </ul>
 
@@ -70,7 +83,7 @@
                 </div>
             </div>
 
-            <!-- Contact & Location Map Pin -->
+            <!-- Contact & Interactive Location Map Pin Picker -->
             <div class="tab-pane fade" id="contactTab">
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -87,19 +100,24 @@
                     </div>
 
                     <div class="col-12 mt-4">
-                        <h6 class="fw-bold border-bottom pb-2"><i class="bi bi-geo-alt-fill text-danger me-2"></i> Interactive Location Map Settings</h6>
+                        <h6 class="fw-bold border-bottom pb-2"><i class="bi bi-geo-alt-fill text-danger me-2"></i> Interactive Location Pin Picker Map</h6>
+                        <small class="text-muted d-block mb-2">Click anywhere on the map or drag the pin marker to automatically set the exact location coordinates.</small>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Location Pin Latitude</label>
-                        <input type="text" name="map_latitude" class="form-control" placeholder="28.535516" value="{{ $settings['map_latitude'] ?? '28.535516' }}">
+                        <input type="text" id="mapLatInput" name="map_latitude" class="form-control font-monospace" placeholder="28.535516" value="{{ $settings['map_latitude'] ?? '28.535516' }}">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Location Pin Longitude</label>
-                        <input type="text" name="map_longitude" class="form-control" placeholder="77.261021" value="{{ $settings['map_longitude'] ?? '77.261021' }}">
+                        <input type="text" id="mapLngInput" name="map_longitude" class="form-control font-monospace" placeholder="77.261021" value="{{ $settings['map_longitude'] ?? '77.261021' }}">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Map Zoom Level</label>
-                        <input type="number" name="map_zoom" class="form-control" value="{{ $settings['map_zoom'] ?? '14' }}">
+                        <input type="number" id="mapZoomInput" name="map_zoom" class="form-control font-monospace" value="{{ $settings['map_zoom'] ?? '14' }}">
+                    </div>
+
+                    <div class="col-12">
+                        <div id="adminPickerMap"></div>
                     </div>
                 </div>
             </div>
@@ -122,4 +140,71 @@
         </div>
     </form>
 </div>
+@endsection
+
+@section('scripts')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const latInput = document.getElementById("mapLatInput");
+        const lngInput = document.getElementById("mapLngInput");
+        const zoomInput = document.getElementById("mapZoomInput");
+
+        let lat = parseFloat(latInput.value) || 28.535516;
+        let lng = parseFloat(lngInput.value) || 77.261021;
+        let zoom = parseInt(zoomInput.value) || 14;
+
+        const map = L.map('adminPickerMap').setView([lat, lng], zoom);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+        marker.bindPopup("<b>Selected Pin Location</b><br>Drag pin or click map to move.").openPopup();
+
+        function updateInputs(newLat, newLng) {
+            latInput.value = newLat.toFixed(6);
+            lngInput.value = newLng.toFixed(6);
+        }
+
+        // On marker drag end
+        marker.on('dragend', function(e) {
+            const position = marker.getLatLng();
+            updateInputs(position.lat, position.lng);
+        });
+
+        // On map click
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            updateInputs(e.latlng.lat, e.latlng.lng);
+        });
+
+        // On zoom end
+        map.on('zoomend', function() {
+            zoomInput.value = map.getZoom();
+        });
+
+        // If manual text input changed
+        function onManualInputChange() {
+            let nLat = parseFloat(latInput.value);
+            let nLng = parseFloat(lngInput.value);
+            if (!isNaN(nLat) && !isNaN(nLng)) {
+                marker.setLatLng([nLat, nLng]);
+                map.panTo([nLat, nLng]);
+            }
+        }
+        latInput.addEventListener('change', onManualInputChange);
+        lngInput.addEventListener('change', onManualInputChange);
+
+        // Resize map when tab is shown
+        const contactTabEl = document.getElementById('contactTabLink');
+        if (contactTabEl) {
+            contactTabEl.addEventListener('shown.bs.tab', function () {
+                map.invalidateSize();
+            });
+        }
+    });
+</script>
 @endsection
