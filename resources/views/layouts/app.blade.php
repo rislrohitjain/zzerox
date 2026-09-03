@@ -12,7 +12,15 @@
     <link rel="preload" href="{{ asset('fonts/DSOfficinaSansBook.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{{ asset('fonts/DSOfficinaSansBold.woff2') }}" as="font" type="font/woff2" crossorigin>
 
-    <link rel="shortcut icon" href="{{ asset(\App\Models\SiteSetting::get('site_favicon', 'favicon.ico')) }}">
+    <!-- Dynamic Favicon Icons -->
+    @php
+        $faviconPath = \App\Models\SiteSetting::get('site_favicon', 'img/favicon.png');
+        $faviconUrl = asset($faviconPath);
+    @endphp
+    <link rel="icon" type="image/png" href="{{ $faviconUrl }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
+
     <link rel="stylesheet" href="{{ asset('css/libs.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">

@@ -3,90 +3,160 @@
 @section('title', 'Dashboard - Zerox Management')
 @section('page_title', 'System Dashboard & Graphical Analytics')
 
+@section('styles')
+<style>
+    .stat-card-link {
+        text-decoration: none;
+        display: block;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .stat-card-link:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.18) !important;
+    }
+    .stat-card-body {
+        padding: 1.25rem;
+        color: #ffffff;
+        position: relative;
+    }
+    .stat-card-footer {
+        background: rgba(0, 0, 0, 0.15);
+        padding: 0.5rem 1.25rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+</style>
+@endsection
+
 @section('content')
-<div class="row g-4 mb-4">
-    <div class="col-md-2">
-        <div class="card border-0 shadow-sm p-3 bg-white">
-            <div class="d-flex justify-content-between align-items-center">
+<!-- Colorful Interactive KPI Stat Cards Grid with Direct Links -->
+<div class="row g-3 mb-4">
+    <!-- Total Products Card -->
+    <div class="col-md-4 col-lg-2">
+        <a href="{{ route('admin.products.index') }}" class="stat-card-link shadow-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">
+            <div class="stat-card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Total Products</span>
-                    <h3 class="fw-bold text-dark m-0">{{ $stats['total_products'] }}</h3>
+                    <span class="text-white-50 text-uppercase fw-bold" style="font-size: 0.7rem;">Total Products</span>
+                    <h2 class="fw-bold text-white m-0 mt-1">{{ $stats['total_products'] }}</h2>
                 </div>
-                <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-circle">
-                    <i class="bi bi-capsule fs-4"></i>
+                <div>
+                    <i class="bi bi-capsule fs-1 text-white opacity-75"></i>
                 </div>
             </div>
-        </div>
+            <div class="stat-card-footer">
+                <span>Manage Catalog</span>
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </div>
+        </a>
     </div>
 
-    <div class="col-md-2">
-        <div class="card border-0 shadow-sm p-3 bg-white">
-            <div class="d-flex justify-content-between align-items-center">
+    <!-- Categories Card -->
+    <div class="col-md-4 col-lg-2">
+        <a href="{{ route('admin.categories.index') }}" class="stat-card-link shadow-sm" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+            <div class="stat-card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Categories</span>
-                    <h3 class="fw-bold text-dark m-0">{{ $stats['total_categories'] }}</h3>
+                    <span class="text-white-50 text-uppercase fw-bold" style="font-size: 0.7rem;">Categories</span>
+                    <h2 class="fw-bold text-white m-0 mt-1">{{ $stats['total_categories'] }}</h2>
                 </div>
-                <div class="p-2 bg-info bg-opacity-10 text-info rounded-circle">
-                    <i class="bi bi-folder2-open fs-4"></i>
+                <div>
+                    <i class="bi bi-folder2-open fs-1 text-white opacity-75"></i>
                 </div>
             </div>
-        </div>
+            <div class="stat-card-footer">
+                <span>Manage Categories</span>
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </div>
+        </a>
     </div>
 
-    <div class="col-md-2">
-        <div class="card border-0 shadow-sm p-3 bg-white">
-            <div class="d-flex justify-content-between align-items-center">
+    <!-- Scratch Codes Card -->
+    <div class="col-md-4 col-lg-2">
+        <a href="{{ route('admin.verifications.index') }}" class="stat-card-link shadow-sm" style="background: linear-gradient(135deg, #10b981, #059669);">
+            <div class="stat-card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Scratch Codes</span>
-                    <h3 class="fw-bold text-dark m-0">{{ $stats['total_verifications'] }}</h3>
+                    <span class="text-white-50 text-uppercase fw-bold" style="font-size: 0.7rem;">Scratch Codes</span>
+                    <h2 class="fw-bold text-white m-0 mt-1">{{ $stats['total_verifications'] }}</h2>
                 </div>
-                <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-circle">
-                    <i class="bi bi-qr-code fs-4"></i>
+                <div>
+                    <i class="bi bi-qr-code-scan fs-1 text-white opacity-75"></i>
                 </div>
             </div>
-        </div>
+            <div class="stat-card-footer">
+                <span>Manage Security Codes</span>
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </div>
+        </a>
     </div>
 
-    <div class="col-md-2">
-        <div class="card border-0 shadow-sm p-3 bg-white">
-            <div class="d-flex justify-content-between align-items-center">
+    <!-- Verified Scans Card -->
+    <div class="col-md-4 col-lg-2">
+        <a href="{{ route('admin.verifications.index') }}" class="stat-card-link shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+            <div class="stat-card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Verified Scans</span>
-                    <h3 class="fw-bold text-success m-0">{{ $stats['verified_codes'] }}</h3>
+                    <span class="text-white-50 text-uppercase fw-bold" style="font-size: 0.7rem;">Verified Scans</span>
+                    <h2 class="fw-bold text-white m-0 mt-1">{{ $stats['verified_codes'] }}</h2>
                 </div>
-                <div class="p-2 bg-success bg-opacity-10 text-success rounded-circle">
-                    <i class="bi bi-shield-check fs-4"></i>
+                <div>
+                    <i class="bi bi-shield-check fs-1 text-white opacity-75"></i>
                 </div>
             </div>
-        </div>
+            <div class="stat-card-footer">
+                <span>View Verified Logs</span>
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </div>
+        </a>
     </div>
 
-    <div class="col-md-2">
-        <div class="card border-0 shadow-sm p-3 bg-white">
-            <div class="d-flex justify-content-between align-items-center">
+    <!-- Subscribers Card -->
+    <div class="col-md-4 col-lg-2">
+        <a href="{{ route('admin.subscribers.index') }}" class="stat-card-link shadow-sm" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+            <div class="stat-card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Subscribers</span>
-                    <h3 class="fw-bold text-primary m-0">{{ $stats['total_subscribers'] }}</h3>
+                    <span class="text-white-50 text-uppercase fw-bold" style="font-size: 0.7rem;">Subscribers</span>
+                    <h2 class="fw-bold text-white m-0 mt-1">{{ $stats['total_subscribers'] }}</h2>
                 </div>
-                <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-circle">
-                    <i class="bi bi-envelope-check fs-4"></i>
+                <div>
+                    <i class="bi bi-envelope-check fs-1 text-white opacity-75"></i>
                 </div>
             </div>
-        </div>
+            <div class="stat-card-footer">
+                <span>View Subscribers</span>
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </div>
+        </a>
     </div>
 
-    <div class="col-md-2">
-        <div class="card border-0 shadow-sm p-3 bg-white">
-            <div class="d-flex justify-content-between align-items-center">
+    <!-- System Users Card -->
+    <div class="col-md-4 col-lg-2">
+        @if(Auth::user() && Auth::user()->hasRole('admin'))
+            <a href="{{ route('admin.users.index') }}" class="stat-card-link shadow-sm" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+        @else
+            <div class="stat-card-link shadow-sm" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+        @endif
+            <div class="stat-card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Users</span>
-                    <h3 class="fw-bold text-dark m-0">{{ $stats['total_users'] }}</h3>
+                    <span class="text-white-50 text-uppercase fw-bold" style="font-size: 0.7rem;">System Users</span>
+                    <h2 class="fw-bold text-white m-0 mt-1">{{ $stats['total_users'] }}</h2>
                 </div>
-                <div class="p-2 bg-secondary bg-opacity-10 text-secondary rounded-circle">
-                    <i class="bi bi-people fs-4"></i>
+                <div>
+                    <i class="bi bi-people fs-1 text-white opacity-75"></i>
                 </div>
             </div>
-        </div>
+            <div class="stat-card-footer">
+                <span>Manage User Roles</span>
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </div>
+        @if(Auth::user() && Auth::user()->hasRole('admin'))
+            </a>
+        @else
+            </div>
+        @endif
     </div>
 </div>
 

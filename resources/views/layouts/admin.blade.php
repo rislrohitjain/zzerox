@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard - Zerox Pharmaceuticals')</title>
 
-    <link rel="shortcut icon" href="{{ asset(\App\Models\SiteSetting::get('site_favicon', 'favicon.ico')) }}">
+    <!-- Dynamic Favicon Icons -->
+    @php
+        $faviconPath = \App\Models\SiteSetting::get('site_favicon', 'img/favicon.png');
+        $faviconUrl = asset($faviconPath);
+    @endphp
+    <link rel="icon" type="image/png" href="{{ $faviconUrl }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
+
     <!-- Bootstrap 5.3 & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
@@ -33,11 +41,14 @@
         }
 
         .admin-sidebar .brand {
-            padding: 1.5rem 1.25rem;
+            padding: 1.25rem;
             color: #ffffff;
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .admin-sidebar .nav-link {
@@ -81,7 +92,8 @@
     <!-- Admin Sidebar -->
     <div class="admin-sidebar">
         <div class="brand">
-            <i class="bi bi-shield-lock-fill text-info me-2"></i> ZEROX ADMIN
+            <img src="{{ asset(\App\Models\SiteSetting::get('site_logo_header', \App\Models\SiteSetting::get('site_logo', 'img/logo.png'))) }}" alt="Zerox Logo" style="max-height: 32px; background: #000; padding: 2px 6px; border-radius: 4px;">
+            <span>ZEROX ADMIN</span>
         </div>
         <div class="py-3">
             <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
