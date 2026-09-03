@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\SubscriberController as AdminSubscriberController;
 use App\Http\Controllers\Admin\PerformanceController as AdminPerformanceController;
 use App\Http\Controllers\Admin\RouteController as AdminRouteController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Admin Panel Routes (Protected by auth and role middleware: admin, operator1)
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,operator1'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Admin Profile Management (View, Edit, Avatar Photo & Social)
+    Route::get('profile', [AdminProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [AdminProfileController::class, 'update'])->name('profile.update');
 
     // Products Management with Soft Deletes & Gallery Images
     Route::resource('products', AdminProductController::class)->except(['show']);

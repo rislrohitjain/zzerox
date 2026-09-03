@@ -99,6 +99,9 @@
             <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
+            <a href="{{ route('admin.profile.edit') }}" class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+                <i class="bi bi-person-circle text-info"></i> My Profile
+            </a>
             <a href="{{ route('admin.banners.index') }}" class="nav-link {{ request()->routeIs('admin.banners.*') ? 'active' : '' }}">
                 <i class="bi bi-images"></i> Banners
             </a>
@@ -146,7 +149,16 @@
             @if((\App\Models\SiteSetting::get('site_under_maintenance', '0')) == '1')
                 <span class="badge bg-warning text-dark"><i class="bi bi-tools me-1"></i> Maintenance Mode Active</span>
             @endif
-            <span class="text-secondary small">Logged in as: <strong class="text-dark">{{ Auth::user()->name }}</strong> ({{ Auth::user()->roles->pluck('name')->implode(', ') }})</span>
+            <a href="{{ route('admin.profile.edit') }}" class="d-flex align-items-center gap-2 text-decoration-none">
+                @if(Auth::user()->avatar)
+                    <img src="{{ asset(Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="rounded-circle border border-2 border-primary" style="width: 32px; height: 32px; object-fit: cover;">
+                @else
+                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center fw-bold border border-primary" style="width: 32px; height: 32px; font-size: 0.85rem;">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                @endif
+                <span class="text-secondary small">Logged in as: <strong class="text-dark">{{ Auth::user()->name }}</strong> ({{ Auth::user()->roles->pluck('name')->implode(', ') }})</span>
+            </a>
             <form action="{{ route('logout') }}" method="POST" class="d-inline">
                 @csrf
                 <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-power me-1"></i> Logout</button>
