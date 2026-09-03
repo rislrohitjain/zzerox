@@ -24,6 +24,7 @@
             <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#generalTab"><i class="bi bi-gear me-1"></i> General & System State</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mediaTab"><i class="bi bi-image me-1"></i> Logo & Favicon</a></li>
             <li class="nav-item"><a class="nav-link" id="contactTabLink" data-bs-toggle="tab" href="#contactTab"><i class="bi bi-geo-alt me-1"></i> Contact & Location Map</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#dbTab"><i class="bi bi-database-gear me-1 text-warning"></i> Database Settings</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#seoTab"><i class="bi bi-search me-1"></i> SEO & Meta</a></li>
         </ul>
 
@@ -131,6 +132,43 @@
 
                     <div class="col-12">
                         <div id="adminPickerMap"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Connection Settings -->
+            <div class="tab-pane fade" id="dbTab">
+                <div class="card bg-light border-primary mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold text-primary mb-1"><i class="bi bi-database me-2"></i> MySQL Database Connection Configuration</h6>
+                        <small class="text-secondary">View and manage active database host connection parameters.</small>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Database Connection Driver</label>
+                        <input type="text" name="db_connection" class="form-control font-monospace" value="{{ config('database.default') }}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Database Server Host (DB_HOST)</label>
+                        <input type="text" name="db_host" class="form-control font-monospace" value="{{ config('database.connections.mysql.host') }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Port Number (DB_PORT)</label>
+                        <input type="text" name="db_port" class="form-control font-monospace" value="{{ config('database.connections.mysql.port') }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Database Name (DB_DATABASE)</label>
+                        <input type="text" name="db_database" class="form-control font-monospace" value="{{ config('database.connections.mysql.database') }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Database User (DB_USERNAME)</label>
+                        <input type="text" name="db_username" class="form-control font-monospace" value="{{ config('database.connections.mysql.username') }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Database Password (DB_PASSWORD)</label>
+                        <input type="password" name="db_password" class="form-control font-monospace" value="••••••••••••" placeholder="Enter new password to update">
                     </div>
                 </div>
             </div>

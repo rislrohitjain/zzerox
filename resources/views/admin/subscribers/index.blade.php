@@ -16,8 +16,21 @@
         </div>
     </div>
 
+    <!-- Interactive Search Bar -->
+    <div class="row g-2 mb-3 p-3 bg-light rounded border">
+        <div class="col-md-9">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" id="adminSubscriberSearch" class="form-control" placeholder="Search by Subscriber Email Address or IP...">
+            </div>
+        </div>
+        <div class="col-md-3 text-end d-flex align-items-center justify-content-end">
+            <span class="badge bg-white text-dark border py-2 px-3"><i class="bi bi-funnel text-primary me-1"></i> Live Filter</span>
+        </div>
+    </div>
+
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table table-hover align-middle border" id="adminSubscribersTable">
             <thead class="table-light">
                 <tr>
                     <th>Email Address</th>
@@ -30,7 +43,7 @@
             <tbody>
                 @forelse($subscribers as $sub)
                     <tr>
-                        <td class="fw-bold"><i class="bi bi-envelope text-info me-2"></i>{{ $sub->email }}</td>
+                        <td class="fw-bold text-dark"><i class="bi bi-envelope text-info me-2"></i>{{ $sub->email }}</td>
                         <td><code class="text-muted">{{ $sub->ip_address ?? 'N/A' }}</code></td>
                         <td class="small text-muted">{{ $sub->subscribed_at ? $sub->subscribed_at->format('Y-m-d H:i') : $sub->created_at->format('Y-m-d H:i') }}</td>
                         <td>
@@ -74,4 +87,23 @@
         {{ $subscribers->links('pagination::bootstrap-4') }}
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById('adminSubscriberSearch');
+        const rows = document.querySelectorAll('#adminSubscribersTable tbody tr');
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const query = searchInput.value.toLowerCase().trim();
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = (!query || text.includes(query)) ? '' : 'none';
+                });
+            });
+        }
+    });
+</script>
 @endsection

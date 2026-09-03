@@ -123,6 +123,9 @@
                 <a href="{{ route('admin.performance.index') }}" class="nav-link {{ request()->routeIs('admin.performance.*') ? 'active' : '' }}">
                     <i class="bi bi-lightning-charge text-warning"></i> Site Performance
                 </a>
+                <a href="{{ route('admin.routes.index') }}" class="nav-link {{ request()->routeIs('admin.routes.*') ? 'active' : '' }}">
+                    <i class="bi bi-signpost-split text-info"></i> Routes & DB Inspector
+                </a>
                 <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                     <i class="bi bi-people"></i> Users & Roles
                 </a>

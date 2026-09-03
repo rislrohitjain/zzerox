@@ -7,9 +7,28 @@
 <div class="row g-4">
     <div class="col-lg-8">
         <div class="card border-0 shadow-sm bg-white p-4">
-            <h5 class="fw-bold mb-3"><i class="bi bi-people text-primary me-2"></i> System Users</h5>
+            <h5 class="fw-bold mb-3"><i class="bi bi-people text-primary me-2"></i> System Users ({{ count($users) }})</h5>
+
+            <!-- Interactive Search & Role Filter Bar -->
+            <div class="row g-2 mb-3 p-3 bg-light rounded border">
+                <div class="col-md-7">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="adminUserSearch" class="form-control" placeholder="Search by User Name or Email...">
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <select id="adminRoleFilter" class="form-select">
+                        <option value="">Filter by Role (All)</option>
+                        <option value="admin">Admin</option>
+                        <option value="operator1">Operator 1</option>
+                        <option value="operator2">Operator 2</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <table class="table table-hover align-middle border" id="adminUsersTable">
                     <thead class="table-light">
                         <tr>
                             <th>User Name</th>
@@ -21,7 +40,7 @@
                     <tbody>
                         @foreach($users as $user)
                             <tr>
-                                <td class="fw-bold">{{ $user->name }}</td>
+                                <td class="fw-bold text-dark">{{ $user->name }}</td>
                                 <td><code>{{ $user->email }}</code></td>
                                 <td>
                                     @foreach($user->roles as $role)
@@ -78,4 +97,34 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById('adminUserSearch');
+        const roleFilter = document.getElementById('adminRoleFilter');
+        const rows = document.querySelectorAll('#adminUsersTable tbody tr');
+
+        function filterUsers() {
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            const role = roleFilter ? roleFilter.value.toLowerCase() : '';
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const matchesSearch = !query || text.includes(query);
+                const matchesRole = !role || text.includes(role);
+
+                if (matchesSearch && matchesRole) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        if (searchInput) searchInput.addEventListener('keyup', filterUsers);
+        if (roleFilter) roleFilter.addEventListener('change', filterUsers);
+    });
+</script>
 @endsection

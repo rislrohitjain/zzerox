@@ -13,14 +13,34 @@
             @else
                 <a href="{{ route('admin.categories.index', ['trashed' => 1]) }}" class="btn btn-sm btn-outline-danger me-2">View Soft-Deleted Categories</a>
             @endif
-            <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
+            <a href="{{ route('admin.categories.create') }}" class="btn btn-primary shadow-sm">
                 <i class="bi bi-plus-lg me-1"></i> Add Category
             </a>
         </div>
     </div>
 
+    <!-- Interactive Search & Type Filter Bar -->
+    <div class="row g-2 mb-3 p-3 bg-light rounded border">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" id="adminCategorySearch" class="form-control" placeholder="Search by Category Name or Slug...">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select id="adminCategoryTypeFilter" class="form-select">
+                <option value="">Filter by Category Hierarchy (All)</option>
+                <option value="Top-Level Parent">Top-Level Parents</option>
+                <option value="Subcategory">Subcategories Only</option>
+            </select>
+        </div>
+        <div class="col-md-2 text-end d-flex align-items-center justify-content-end">
+            <span class="badge bg-white text-dark border py-2 px-3"><i class="bi bi-funnel text-primary me-1"></i> Live Filter</span>
+        </div>
+    </div>
+
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table table-hover align-middle border" id="adminCategoriesTable">
             <thead class="table-light">
                 <tr>
                     <th>Order</th>
@@ -43,7 +63,7 @@
                                 <span class="badge bg-light text-muted">No Image</span>
                             @endif
                         </td>
-                        <td class="fw-bold">{{ $c->name }}</td>
+                        <td class="fw-bold text-dark">{{ $c->name }}</td>
                         <td><code class="text-info">{{ $c->slug }}</code></td>
                         <td>
                             @if($c->parent)
@@ -92,4 +112,34 @@
         {{ $categories->links('pagination::bootstrap-4') }}
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById('adminCategorySearch');
+        const typeFilter = document.getElementById('adminCategoryTypeFilter');
+        const rows = document.querySelectorAll('#adminCategoriesTable tbody tr');
+
+        function filterTable() {
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            const type = typeFilter ? typeFilter.value.toLowerCase() : '';
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const matchesSearch = !query || text.includes(query);
+                const matchesType = !type || (type === 'top-level parent' ? text.includes('top-level parent') : !text.includes('top-level parent'));
+
+                if (matchesSearch && matchesType) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        if (searchInput) searchInput.addEventListener('keyup', filterTable);
+        if (typeFilter) typeFilter.addEventListener('change', filterTable);
+    });
+</script>
 @endsection

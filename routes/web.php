@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\RoleUserController as AdminRoleUserController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\SubscriberController as AdminSubscriberController;
 use App\Http\Controllers\Admin\PerformanceController as AdminPerformanceController;
+use App\Http\Controllers\Admin\RouteController as AdminRouteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -88,6 +89,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,operator
         // Site Performance & Speed Optimization Routes
         Route::get('performance', [AdminPerformanceController::class, 'index'])->name('performance.index');
         Route::post('performance/optimize', [AdminPerformanceController::class, 'optimize'])->name('performance.optimize');
+
+        // System Routes & Database Explorer Route
+        Route::get('routes', [AdminRouteController::class, 'index'])->name('routes.index');
 
         // Users & Roles Management
         Route::get('users', [AdminRoleUserController::class, 'index'])->name('users.index');
