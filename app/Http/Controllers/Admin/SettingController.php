@@ -10,13 +10,32 @@ class SettingController extends Controller
 {
     public function index()
     {
-        $settings = SiteSetting::all()->groupBy('group');
+        $settings = SiteSetting::all()->pluck('value', 'key')->all();
         return view('admin.settings.index', compact('settings'));
     }
 
     public function update(Request $request)
     {
-        $inputs = $request->except('_token');
+        $inputs = $request->except(['_token', 'site_logo', 'site_favicon']);
+
+        // Handle Site Maintenance Toggle (checkbox)
+        $inputs['site_under_maintenance'] = $request->has('site_under_maintenance') ? '1' : '0';
+
+        // Handle Site Logo Upload
+        if ($request->hasFile('site_logo')) {
+            $file = $request->file('site_logo');
+            $fileName = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('img'), $fileName);
+            SiteSetting::set('site_logo', 'img/' . $fileName);
+        }
+
+        // Handle Site Favicon Upload
+        if ($request->hasFile('site_favicon')) {
+            $file = $request->file('site_favicon');
+            $fileName = 'favicon_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('img'), $fileName);
+            SiteSetting::set('site_favicon', 'img/' . $fileName);
+        }
 
         foreach ($inputs as $key => $value) {
             SiteSetting::set($key, $value);
@@ -24,6 +43,6 @@ class SettingController extends Controller
 
         SiteSetting::clearCache();
 
-        return redirect()->back()->with('success', 'Site settings updated successfully.');
+        return redirect()->back()->with('success', 'Site settings, logos, map location, and maintenance status updated successfully.');
     }
 }

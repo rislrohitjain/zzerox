@@ -16,6 +16,7 @@ class CreateProductVerificationsTable extends Migration
             $table->boolean('is_verified')->default(false);
             $table->timestamp('verified_at')->nullable();
             $table->string('ip_address')->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->index('security_code');

@@ -8,7 +8,7 @@
     <title>@yield('title', \App\Models\SiteSetting::get('meta_title', 'Zerox – Pharmaceuticals'))</title>
     <meta name="description" content="@yield('meta_description', \App\Models\SiteSetting::get('meta_description', 'Official web portal of Zerox Pharmaceuticals Ltd.'))">
 
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset(\App\Models\SiteSetting::get('site_favicon', 'favicon.ico')) }}">
     <link rel="stylesheet" href="{{ asset('css/libs.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lightbox.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
@@ -16,7 +16,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        /* Custom overrides to match zzerox.com exact layout and dynamic features */
         .verification__loader {
             display: flex;
             flex-direction: column;
@@ -112,7 +111,7 @@
                 </ul>
             </nav>
             <a href="{{ route('home') }}" class="header__logo">
-                <img src="{{ asset('img/logo.png') }}" alt="Zerox">
+                <img src="{{ asset(\App\Models\SiteSetting::get('site_logo', 'img/logo.png')) }}" alt="Zerox" style="max-height: 45px;">
             </a>
             <nav class="header__nav header__nav_right">
                 <ul id="menu-top-right-menu">
@@ -144,11 +143,29 @@
 
 <footer class="footer">
     <div class="container">
+        <!-- Newsletter Subscription Bar -->
+        <div style="background: #1e293b; padding: 25px 30px; border-radius: 8px; margin-bottom: 40px;">
+            <div class="row align-items-center" style="display: flex; flex-wrap: wrap; align-items: center;">
+                <div class="col-md-6 col-xs-12">
+                    <h4 style="color: #c9a227; font-weight: 700; margin: 0 0 5px 0; font-size: 18px;">Subscribe to Zerox Official Updates</h4>
+                    <p style="color: #aaa; margin: 0; font-size: 13px;">Get verified product release alerts and scientific publications directly to your inbox.</p>
+                </div>
+                <div class="col-md-6 col-xs-12" style="margin-top: 10px;">
+                    <form id="newsletterForm" action="{{ route('subscribe') }}" method="POST" style="display: flex; gap: 10px;">
+                        @csrf
+                        <input type="email" name="email" placeholder="Enter your email address..." required style="flex-grow: 1; padding: 10px 15px; border-radius: 4px; border: none; font-size: 14px;">
+                        <button type="submit" style="background: #c9a227; color: #000; font-weight: 700; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; white-space: nowrap;">Subscribe</button>
+                    </form>
+                    <div id="newsletterFeedback" style="font-size: 13px; margin-top: 5px;"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="footer__top">
             <div class="row">
                 <div class="col-md-3 col-xs-12">
                     <a href="{{ route('home') }}" class="footer__logo">
-                        <img src="{{ asset('img/logo.png') }}" alt="Zerox">
+                        <img src="{{ asset(\App\Models\SiteSetting::get('site_logo', 'img/logo.png')) }}" alt="Zerox" style="max-height: 40px;">
                     </a>
                 </div>
                 <div class="col-md-3 col-xs-12">
@@ -211,6 +228,41 @@
 <script src="{{ asset('js/jquery.min.js') }}"></script>
 <script src="{{ asset('js/jquery-migrate.min.js') }}"></script>
 <script src="{{ asset('css/lightbox.min.css') }}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const subForm = document.getElementById('newsletterForm');
+        const feedback = document.getElementById('newsletterFeedback');
+
+        if (subForm) {
+            subForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                feedback.innerHTML = '<span style="color: #aaa;">Submitting...</span>';
+                const formData = new FormData(subForm);
+
+                fetch(subForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        feedback.innerHTML = `<span style="color: #28a745; font-weight: bold;">${data.message}</span>`;
+                        subForm.reset();
+                    } else {
+                        feedback.innerHTML = `<span style="color: #dc3545;">Please enter a valid email address.</span>`;
+                    }
+                })
+                .catch(err => {
+                    feedback.innerHTML = `<span style="color: #dc3545;">Error subscribing. Please try again.</span>`;
+                });
+            });
+        }
+    });
+</script>
 
 @yield('scripts')
 </body>

@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="card border-0 shadow-sm bg-white p-4">
-    <form action="{{ route('admin.categories.store') }}" method="POST">
+    <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row g-3">
             <div class="col-md-6">
@@ -26,6 +26,12 @@
             <div class="col-md-2">
                 <label class="form-label fw-bold">Display Order</label>
                 <input type="number" name="order" class="form-control" value="0">
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Category Image (Optional)</label>
+                <input type="file" name="category_image" class="form-control" accept="image/*">
+                <div class="form-text">Upload category banner/thumbnail image.</div>
             </div>
 
             <div class="col-12">

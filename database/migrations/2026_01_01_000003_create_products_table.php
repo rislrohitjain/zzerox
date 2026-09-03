@@ -22,6 +22,7 @@ class CreateProductsTable extends Migration
             $table->longText('administration_uses')->nullable();
             $table->string('image_path')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->softDeletes();
             $table->timestamps();
 
             $table->index('slug');

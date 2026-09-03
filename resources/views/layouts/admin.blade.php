@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard - Zerox Pharmaceuticals')</title>
 
+    <link rel="shortcut icon" href="{{ asset(\App\Models\SiteSetting::get('site_favicon', 'favicon.ico')) }}">
     <!-- Bootstrap 5.3 & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js for Graphical System Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
     <style>
         body {
@@ -95,6 +99,9 @@
             <a href="{{ route('admin.verifications.index') }}" class="nav-link {{ request()->routeIs('admin.verifications.*') ? 'active' : '' }}">
                 <i class="bi bi-qr-code-scan"></i> Verifications
             </a>
+            <a href="{{ route('admin.subscribers.index') }}" class="nav-link {{ request()->routeIs('admin.subscribers.*') ? 'active' : '' }}">
+                <i class="bi bi-envelope-check"></i> Subscribers
+            </a>
 
             @if(Auth::user() && Auth::user()->hasRole('admin'))
                 <div class="px-3 pt-3 pb-1 text-uppercase text-secondary fw-bold" style="font-size: 0.7rem;">System Administration</div>
@@ -118,6 +125,9 @@
             <h5 class="m-0 fw-bold">@yield('page_title', 'Dashboard')</h5>
         </div>
         <div class="d-flex align-items-center gap-3">
+            @if((\App\Models\SiteSetting::get('site_under_maintenance', '0')) == '1')
+                <span class="badge bg-warning text-dark"><i class="bi bi-tools me-1"></i> Maintenance Mode Active</span>
+            @endif
             <span class="text-secondary small">Logged in as: <strong class="text-dark">{{ Auth::user()->name }}</strong> ({{ Auth::user()->roles->pluck('name')->implode(', ') }})</span>
             <form action="{{ route('logout') }}" method="POST" class="d-inline">
                 @csrf

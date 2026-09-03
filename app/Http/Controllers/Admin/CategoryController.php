@@ -10,9 +10,15 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::with('parent')->orderBy('order', 'asc')->paginate(15);
+        $query = Category::with('parent');
+
+        if ($request->has('trashed') && $request->input('trashed') == '1') {
+            $query->onlyTrashed();
+        }
+
+        $categories = $query->orderBy('order', 'asc')->paginate(15);
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -31,16 +37,24 @@ class CategoryController extends Controller
             'order' => 'nullable|integer',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
+            'category_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:5120',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
         $validated['order'] = $validated['order'] ?? 0;
 
+        if ($request->hasFile('category_image')) {
+            $file = $request->file('category_image');
+            $fileName = 'cat_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('img/categories'), $fileName);
+            $validated['image_path'] = 'img/categories/' . $fileName;
+        }
+
         Category::create($validated);
 
         Cache::forget('nav_categories_tree');
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
+        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully with image.');
     }
 
     public function edit(Category $category)
@@ -58,10 +72,18 @@ class CategoryController extends Controller
             'order' => 'nullable|integer',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
+            'category_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:5120',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
         $validated['order'] = $validated['order'] ?? 0;
+
+        if ($request->hasFile('category_image')) {
+            $file = $request->file('category_image');
+            $fileName = 'cat_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('img/categories'), $fileName);
+            $validated['image_path'] = 'img/categories/' . $fileName;
+        }
 
         $category->update($validated);
 
@@ -72,9 +94,27 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        $category->delete();
+        $category->delete(); // Soft delete
         Cache::forget('nav_categories_tree');
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully.');
+        return redirect()->route('admin.categories.index')->with('success', 'Category soft-deleted successfully.');
+    }
+
+    public function restore($id)
+    {
+        $category = Category::withTrashed()->findOrFail($id);
+        $category->restore();
+        Cache::forget('nav_categories_tree');
+
+        return redirect()->back()->with('success', 'Category restored successfully.');
+    }
+
+    public function forceDelete($id)
+    {
+        $category = Category::withTrashed()->findOrFail($id);
+        $category->forceDelete();
+        Cache::forget('nav_categories_tree');
+
+        return redirect()->back()->with('success', 'Category permanently deleted.');
     }
 }

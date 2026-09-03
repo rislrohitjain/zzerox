@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="card border-0 shadow-sm bg-white p-4">
-    <form action="{{ route('admin.categories.update', $category->id) }}" method="POST">
+    <form action="{{ route('admin.categories.update', $category->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="row g-3">
@@ -27,6 +27,17 @@
             <div class="col-md-2">
                 <label class="form-label fw-bold">Display Order</label>
                 <input type="number" name="order" class="form-control" value="{{ old('order', $category->order) }}">
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Category Image (Optional)</label>
+                <input type="file" name="category_image" class="form-control" accept="image/*">
+                @if($category->image_path)
+                    <div class="mt-2">
+                        <small class="text-muted d-block">Current Category Image:</small>
+                        <img src="{{ asset($category->image_path) }}" style="height: 60px; object-fit: cover;" class="rounded border">
+                    </div>
+                @endif
             </div>
 
             <div class="col-12">

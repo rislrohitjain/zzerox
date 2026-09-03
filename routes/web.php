@@ -5,6 +5,7 @@ use App\Http\Controllers\FrontController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Admin\VerificationController as AdminVerificationContro
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\RoleUserController as AdminRoleUserController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
+use App\Http\Controllers\Admin\SubscriberController as AdminSubscriberController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +28,9 @@ Route::get('/about-us', [FrontController::class, 'about'])->name('about');
 Route::get('/contact-us', [FrontController::class, 'contact'])->name('contact');
 Route::post('/contact-us', [FrontController::class, 'submitContact'])->name('contact.submit');
 Route::get('/lab-analysis', [FrontController::class, 'analysis'])->name('analysis');
+
+// Public Subscription Endpoint
+Route::post('/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
 
 // Catalog Routes
 Route::get('/category/{slug}', [CatalogController::class, 'category'])->name('category.show');
@@ -49,15 +54,23 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,operator1'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Products Management with Gallery Images
+    // Products Management with Soft Deletes & Gallery Images
     Route::resource('products', AdminProductController::class)->except(['show']);
     Route::delete('products/images/{image}', [AdminProductController::class, 'destroyImage'])->name('products.images.destroy');
 
-    // Categories Management
+    // Categories Management with Soft Deletes
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
+    Route::put('categories/{id}/restore', [AdminCategoryController::class, 'restore'])->name('categories.restore');
+    Route::delete('categories/{id}/force', [AdminCategoryController::class, 'forceDelete'])->name('categories.forceDelete');
 
     // Banners Management
     Route::resource('banners', AdminBannerController::class)->except(['show']);
+
+    // Subscribers Management
+    Route::get('subscribers', [AdminSubscriberController::class, 'index'])->name('subscribers.index');
+    Route::delete('subscribers/{id}', [AdminSubscriberController::class, 'destroy'])->name('subscribers.destroy');
+    Route::put('subscribers/{id}/restore', [AdminSubscriberController::class, 'restore'])->name('subscribers.restore');
+    Route::delete('subscribers/{id}/force', [AdminSubscriberController::class, 'forceDelete'])->name('subscribers.forceDelete');
 
     // Verifications Management
     Route::get('verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');

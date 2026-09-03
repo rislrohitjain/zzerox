@@ -17,6 +17,7 @@ class CreateBannersTable extends Migration
             $table->string('button_url')->nullable();
             $table->integer('order')->default(0);
             $table->boolean('is_active')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
