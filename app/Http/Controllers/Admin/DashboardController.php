@@ -23,13 +23,17 @@ class DashboardController extends Controller
             'total_users' => User::count(),
         ];
 
-        // Graphical Presentation 1: Products distribution by parent Category
-        $categoriesChart = Category::whereNull('parent_id')
-            ->withCount('products')
-            ->get();
+        // Graphical Presentation 1: Products distribution by parent Category (including all subcategories)
+        $parentCategories = Category::whereNull('parent_id')->with('children')->get();
+        $catLabels = [];
+        $catData = [];
 
-        $catLabels = $categoriesChart->pluck('name')->toArray();
-        $catData = $categoriesChart->pluck('products_count')->toArray();
+        foreach ($parentCategories as $parent) {
+            $categoryIds = array_merge([$parent->id], $parent->children->pluck('id')->toArray());
+            $productCount = Product::whereIn('category_id', $categoryIds)->count();
+            $catLabels[] = $parent->name;
+            $catData[] = $productCount;
+        }
 
         // Graphical Presentation 2: Verification scans count by batch
         $batchChart = ProductVerification::select('batch_number', DB::raw('count(*) as total'))
