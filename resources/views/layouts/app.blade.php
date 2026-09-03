@@ -8,12 +8,16 @@
     <title>@yield('title', \App\Models\SiteSetting::get('meta_title', 'Zerox – Pharmaceuticals'))</title>
     <meta name="description" content="@yield('meta_description', \App\Models\SiteSetting::get('meta_description', 'Official web portal of Zerox Pharmaceuticals Ltd.'))">
 
+    <!-- Preload Critical Fonts for Speed -->
+    <link rel="preload" href="{{ asset('fonts/DSOfficinaSansBook.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('fonts/DSOfficinaSansBold.woff2') }}" as="font" type="font/woff2" crossorigin>
+
     <link rel="shortcut icon" href="{{ asset(\App\Models\SiteSetting::get('site_favicon', 'favicon.ico')) }}">
     <link rel="stylesheet" href="{{ asset('css/libs.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/lightbox.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
         .verification__loader {
@@ -225,9 +229,10 @@
     </div>
 </footer>
 
-<script src="{{ asset('js/jquery.min.js') }}"></script>
-<script src="{{ asset('js/jquery-migrate.min.js') }}"></script>
-<script src="{{ asset('css/lightbox.min.css') }}"></script>
+<!-- Optimized JavaScript CDN links -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-3.4.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
