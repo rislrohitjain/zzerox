@@ -129,6 +129,9 @@
                 <a href="{{ route('admin.routes.index') }}" class="nav-link {{ request()->routeIs('admin.routes.*') ? 'active' : '' }}">
                     <i class="bi bi-signpost-split text-info"></i> Routes & DB Inspector
                 </a>
+                <a href="{{ route('admin.swagger.index') }}" class="nav-link {{ request()->routeIs('admin.swagger.*') ? 'active' : '' }}">
+                    <i class="bi bi-code-slash text-success"></i> API Docs & Swagger
+                </a>
                 <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                     <i class="bi bi-people"></i> Users & Roles
                 </a>

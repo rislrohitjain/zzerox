@@ -18,12 +18,27 @@ use App\Http\Controllers\Admin\SubscriberController as AdminSubscriberController
 use App\Http\Controllers\Admin\PerformanceController as AdminPerformanceController;
 use App\Http\Controllers\Admin\RouteController as AdminRouteController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Api\V1\ApiController as RestApiController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes - Zerox Pharmaceuticals Ltd
 |--------------------------------------------------------------------------
 */
+
+// RESTful API V1 Endpoints (OpenAPI / Swagger Specs)
+Route::prefix('api/v1')->group(function () {
+    Route::get('/products', [RestApiController::class, 'products']);
+    Route::get('/products/{slug}', [RestApiController::class, 'productDetail']);
+    Route::get('/categories', [RestApiController::class, 'categories']);
+    Route::get('/categories/{slug}', [RestApiController::class, 'categoryDetail']);
+    Route::post('/verify-code', [RestApiController::class, 'verifyCode']);
+    Route::get('/banners', [RestApiController::class, 'banners']);
+    Route::get('/settings', [RestApiController::class, 'settings']);
+    Route::post('/subscribe', [RestApiController::class, 'subscribe']);
+    Route::get('/health', [RestApiController::class, 'health']);
+    Route::get('/openapi.json', [RestApiController::class, 'openApiSpec']);
+});
 
 // Public Frontend Routes matching Zerox.com
 Route::get('/', [FrontController::class, 'home'])->name('home');
@@ -97,6 +112,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,operator
 
         // System Routes & Database Explorer Route
         Route::get('routes', [AdminRouteController::class, 'index'])->name('routes.index');
+
+        // Swagger UI API Documentation Playground
+        Route::get('swagger', function() {
+            return view('admin.swagger.index');
+        })->name('swagger.index');
 
         // Users & Roles Management
         Route::get('users', [AdminRoleUserController::class, 'index'])->name('users.index');
