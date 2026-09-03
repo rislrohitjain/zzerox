@@ -13,20 +13,30 @@
 
 <div class="container" style="padding: 50px 15px;">
     <div class="row">
-        <!-- Main Image & Interactive Image Gallery -->
+        <!-- Main Image & Interactive Photo Gallery Zoom Effect -->
         <div class="col-md-5 col-xs-12">
             <div style="background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 20px; text-align: center;">
-                <img id="mainProductImage" src="{{ asset($product->image_path ?? 'img/welcome-image.png') }}" alt="{{ $product->name }}" style="max-width: 100%; max-height: 350px; object-fit: contain; border-radius: 4px;">
+                <div class="zoom-effect-container">
+                    <a id="mainImageLightboxLink" href="{{ asset($product->image_path ?? 'img/welcome-image.png') }}" data-lightbox="product-gallery" data-title="{{ $product->name }}">
+                        <img id="mainProductImage" class="zoom-effect-img" src="{{ asset($product->image_path ?? 'img/welcome-image.png') }}" alt="{{ $product->name }}" style="max-width: 100%; max-height: 350px; object-fit: contain; border-radius: 4px;">
+                        <div class="zoom-overlay-icon"><i class="bi bi-search font-weight-bold"></i></div>
+                    </a>
+                </div>
 
-                <!-- Product Gallery Thumbnails -->
+                <!-- Product Gallery Thumbnails with Zoom Preview -->
                 @if(isset($product->images) && count($product->images) > 0)
                     <div class="product-gallery-thumbs" style="justify-content: center; margin-top: 20px;">
-                        <img src="{{ asset($product->image_path ?? 'img/welcome-image.png') }}" class="product-gallery-thumb active" onclick="switchMainImage(this.src, this)">
-                        @foreach($product->images as $gImg)
-                            <img src="{{ asset($gImg->image_path) }}" class="product-gallery-thumb" onclick="switchMainImage(this.src, this)">
+                        <a href="{{ asset($product->image_path ?? 'img/welcome-image.png') }}" data-lightbox="product-gallery" data-title="{{ $product->name }} - Main Image" style="display: inline-block;">
+                            <img src="{{ asset($product->image_path ?? 'img/welcome-image.png') }}" class="product-gallery-thumb active" onclick="switchMainImage(this.src, this); return false;">
+                        </a>
+                        @foreach($product->images as $index => $gImg)
+                            <a href="{{ asset($gImg->image_path) }}" data-lightbox="product-gallery" data-title="{{ $product->name }} - Gallery View {{ $index + 1 }}" style="display: inline-block;">
+                                <img src="{{ asset($gImg->image_path) }}" class="product-gallery-thumb" onclick="switchMainImage(this.src, this); return false;">
+                            </a>
                         @endforeach
                     </div>
                 @endif
+                <small class="text-muted d-block mt-2" style="font-size: 12px;"><i class="bi bi-zoom-in me-1"></i> Click image or thumbnails to open full-screen lightbox zoom</small>
             </div>
         </div>
 
@@ -45,7 +55,7 @@
                     <strong style="color: #856404; display: block;">Verify Scratch Code</strong>
                     <span style="font-size: 13px; color: #856404;">Check authenticity label on packaging box</span>
                 </div>
-                <a href="{{ route('authenticity') }}" style="background: #c9a227; color: #000; padding: 8px 18px; font-weight: 700; border-radius: 4px; text-decoration: none;">Verify Code</a>
+                <a href="{{ route('authenticity') }}" style="background: #c9a227; color: #000; padding: 8px 18px; font-weight: 700; border-radius: 4px; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.04)';" onmouseout="this.style.transform='scale(1)';">Verify Code</a>
             </div>
         </div>
     </div>
@@ -58,15 +68,15 @@
             <button class="tab-btn" onclick="openSpecTab(event, 'tab-administration')" style="background: none; border: none; padding: 10px 20px; font-size: 16px; font-weight: 700; color: #666; cursor: pointer;">Administration & Uses</button>
         </div>
 
-        <div id="tab-chemical" class="tab-content-item" style="display: block;">
+        <div id="tab-chemical" class="tab-content-item animated-fade-in" style="display: block;">
             <pre style="background: #f8f9fa; padding: 20px; border-radius: 6px; font-family: monospace; white-space: pre-wrap; color: #333;">{{ $product->chemical_characteristics }}</pre>
         </div>
 
-        <div id="tab-side-effects" class="tab-content-item" style="display: none;">
+        <div id="tab-side-effects" class="tab-content-item animated-fade-in" style="display: none;">
             <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; color: #444; white-space: pre-wrap;">{{ $product->side_effects }}</div>
         </div>
 
-        <div id="tab-administration" class="tab-content-item" style="display: none;">
+        <div id="tab-administration" class="tab-content-item animated-fade-in" style="display: none;">
             <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; color: #444; white-space: pre-wrap;">{{ $product->administration_uses }}</div>
         </div>
     </div>
@@ -77,6 +87,7 @@
 <script>
     function switchMainImage(src, element) {
         document.getElementById('mainProductImage').src = src;
+        document.getElementById('mainImageLightboxLink').href = src;
         document.querySelectorAll('.product-gallery-thumb').forEach(thumb => thumb.classList.remove('active'));
         element.classList.add('active');
     }

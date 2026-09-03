@@ -19,33 +19,87 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
+    <!-- Custom Photo Gallery Zoom Effects & Micro-Animations -->
     <style>
-        .verification__loader {
+        /* Smooth Fade In Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animated-fade-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Image Gallery Hover Zoom Effects */
+        .zoom-effect-container {
+            overflow: hidden;
+            position: relative;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .zoom-effect-img {
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.4s ease;
+        }
+        .zoom-effect-container:hover .zoom-effect-img {
+            transform: scale(1.08);
+            filter: brightness(1.03);
+        }
+        .zoom-overlay-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(201, 162, 39, 0.9);
+            color: #000;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px;
-            min-height: 120px;
+            font-size: 20px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .verification__loader-spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(0, 0, 0, 0.1);
-            border-top-color: #c9a227;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .zoom-effect-container:hover .zoom-overlay-icon {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
-        .verification__loader-text {
+
+        /* Product Gallery Thumbnails Zoom */
+        .product-gallery-thumbs {
+            display: flex;
+            gap: 12px;
             margin-top: 20px;
-            color: #333;
-            font-size: 16px;
-            font-weight: 500;
+            flex-wrap: wrap;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .product-gallery-thumb {
+            width: 75px;
+            height: 75px;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
+        .product-gallery-thumb:hover {
+            transform: translateY(-3px) scale(1.08);
+            border-color: #c9a227;
+            box-shadow: 0 5px 12px rgba(201, 162, 39, 0.3);
+        }
+        .product-gallery-thumb.active {
+            border-color: #c9a227;
+            box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.4);
+        }
+
+        /* Modal styling */
         .modal-custom {
             display: none;
             position: fixed;
@@ -55,16 +109,18 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.6);
+            background-color: rgba(0,0,0,0.65);
+            backdrop-filter: blur(4px);
         }
         .modal-custom-content {
             background-color: #fff;
-            margin: 10% auto;
+            margin: 8% auto;
             padding: 30px;
             border-radius: 8px;
             max-width: 550px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             position: relative;
+            animation: fadeInUp 0.4s ease-out;
         }
         .modal-custom-close {
             color: #aaa;
@@ -75,23 +131,6 @@
         }
         .modal-custom-close:hover {
             color: #000;
-        }
-        .product-gallery-thumbs {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .product-gallery-thumb {
-            width: 70px;
-            height: 70px;
-            object-fit: cover;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-        .product-gallery-thumb:hover, .product-gallery-thumb.active {
-            border-color: #c9a227;
         }
     </style>
     @yield('styles')
@@ -141,7 +180,7 @@
     </div>
 </header>
 
-<main>
+<main class="animated-fade-in">
     @yield('content')
 </main>
 
@@ -158,7 +197,7 @@
                     <form id="newsletterForm" action="{{ route('subscribe') }}" method="POST" style="display: flex; gap: 10px;">
                         @csrf
                         <input type="email" name="email" placeholder="Enter your email address..." required style="flex-grow: 1; padding: 10px 15px; border-radius: 4px; border: none; font-size: 14px;">
-                        <button type="submit" style="background: #c9a227; color: #000; font-weight: 700; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; white-space: nowrap;">Subscribe</button>
+                        <button type="submit" style="background: #c9a227; color: #000; font-weight: 700; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; white-space: nowrap; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.03)';" onmouseout="this.style.transform='scale(1)';">Subscribe</button>
                     </form>
                     <div id="newsletterFeedback" style="font-size: 13px; margin-top: 5px;"></div>
                 </div>
@@ -236,6 +275,15 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Lightbox default configurations for image zoom
+        if (typeof lightbox !== 'undefined') {
+            lightbox.option({
+                'resizeDuration': 200,
+                'wrapAround': true,
+                'alwaysShowNavOnTouchDevices': true
+            });
+        }
+
         const subForm = document.getElementById('newsletterForm');
         const feedback = document.getElementById('newsletterFeedback');
 
