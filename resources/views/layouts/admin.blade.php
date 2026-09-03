@@ -212,7 +212,10 @@
         </div>
         <div class="d-flex align-items-center gap-3">
             @if((\App\Models\SiteSetting::get('site_under_maintenance', '0')) == '1')
-                <span class="badge bg-warning text-dark"><i class="bi bi-tools me-1"></i> Maintenance Mode Active</span>
+                <div class="d-flex align-items-center gap-2 bg-warning bg-opacity-10 border border-warning px-2 py-1 rounded">
+                    <span class="badge bg-warning text-dark"><i class="bi bi-tools me-1"></i> Maintenance Mode Active</span>
+                    <a href="{{ route('maintenance.preview') }}" target="_blank" class="btn btn-sm btn-dark py-0 px-2 fw-bold" style="font-size: 0.75rem;"><i class="bi bi-eye me-1"></i> Preview Screen</a>
+                </div>
             @endif
 
             <!-- 4 Theme Selector Switcher -->

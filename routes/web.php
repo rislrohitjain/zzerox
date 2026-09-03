@@ -40,6 +40,11 @@ Route::prefix('api/v1')->group(function () {
     Route::get('/openapi.json', [RestApiController::class, 'openApiSpec']);
 });
 
+// Maintenance Preview Route (for Admins to test/preview screen)
+Route::get('/maintenance-preview', function() {
+    return response()->view('maintenance', [], 503);
+})->name('maintenance.preview');
+
 // Public Frontend Routes matching Zerox.com
 Route::get('/', [FrontController::class, 'home'])->name('home');
 Route::get('/about-us', [FrontController::class, 'about'])->name('about');

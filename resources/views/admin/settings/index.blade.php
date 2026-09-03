@@ -34,7 +34,10 @@
                 <div class="card bg-light border-warning mb-4">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="fw-bold text-dark mb-1"><i class="bi bi-tools text-warning me-2"></i> Maintenance Mode</h6>
+                            <h6 class="fw-bold text-dark mb-1">
+                                <i class="bi bi-tools text-warning me-2"></i> Maintenance Mode
+                                <a href="{{ route('maintenance.preview') }}" target="_blank" class="ms-2 btn btn-sm btn-warning text-dark fw-bold py-0 px-2" style="font-size: 0.75rem;"><i class="bi bi-eye me-1"></i> Preview Maintenance Screen</a>
+                            </h6>
                             <small class="text-secondary">When enabled, visitors will see the maintenance screen. Logged-in admins can still browse and access the admin panel.</small>
                         </div>
                         <div class="form-check form-switch fs-4">
